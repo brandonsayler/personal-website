@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brandon Sayler</title>
+  <meta name="description" content="Brandon Sayler — AI safety researcher, writer, musician, philosopher.">
+  <meta name="author" content="Brandon Sayler">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-ember">
+  <canvas id="canvas"></canvas>
+
+  <!-- Floating cursor SVG -->
+  <svg xmlns="http://www.w3.org/2000/svg" id="cursor-svg">
+    <circle id="halo" class="ring" cx="0" cy="0" r="10" stroke-width="4" fill="none"></circle>
+    <circle id="dot" class="ring" cx="0" cy="0" r="4"></circle>
+  </svg>
+
+  <div id="overlay">
+    <div id="card-container">
+      <div id="card" class="card">
+        <!-- Theme photos (one visible per theme) -->
+        <img class="theme-photo only-ember" src="img/brandon-1.jpg" alt="">
+        <img class="theme-photo only-forest" src="img/brandon-3.jpg" alt="">
+        <img class="theme-photo only-ocean" src="img/brandon-2.jpg" alt="">
+        <img class="theme-photo only-violet" src="img/brandon-4.png" alt="">
+        <img class="theme-photo only-aurora" src="img/yellow.jpg" alt="">
+        <img class="theme-photo only-solar" src="img/red.jpg" alt="">
+        <img class="theme-photo only-cosmic" src="img/green.jpg" alt="">
+        <img class="theme-photo only-terra" src="img/blue.png" alt="">
+
+        <h1>Brandon Sayler</h1>
+        <ul class="links">
+          <li><span class="arrow">&rarr;</span><a href="https://linkedin.com/in/brandonsayler">AI Safety-ist</a></li>
+          <li><span class="arrow">&rarr;</span><a href="https://sayler.substack.com">Writer</a></li>
+          <li><span class="arrow">&rarr;</span><a href="https://stats.fm/sayler">Listener</a> &amp; <a href="https://bit.ly/brandonsmusictaste">Curator</a></li>
+          <li><span class="arrow">&rarr;</span><a href="https://x.com/brandonsayler">Tweeter?</a></li>
+          <li><span class="arrow">&rarr;</span><a href="#" id="toggle-more">more &raquo;</a></li>
+        </ul>
+
+        <!-- Fixed quotes per theme (never change, shown/hidden by CSS) -->
+        <blockquote>
+          <span class="quote-text only-ember">
+            The noblest question in the world is: What good may I do in it?
+          </span>
+          <span class="quote-text only-forest">
+            He who has a why to live can bear almost any how.
+          </span>
+          <span class="quote-text only-ocean">
+            The reasonable man adapts himself to the world; the unreasonable
+            one persists in trying to adapt the world to himself. Therefore
+            all progress depends on the unreasonable man.
+          </span>
+          <span class="quote-text only-violet">
+            Poetry is when an emotion has found its thought and the thought has found words.
+          </span>
+          <span class="quote-text only-aurora">
+            Somewhere, something incredible is waiting to be known.
+          </span>
+          <span class="quote-text only-solar">
+            Any sufficiently advanced technology is indistinguishable from magic.
+          </span>
+          <span class="quote-text only-cosmic">
+            Not only is the universe stranger than we imagine, it is stranger than we can imagine.
+          </span>
+          <span class="quote-text only-terra">
+            Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.
+          </span>
+          <small class="quote-author only-ember"><a href="https://en.wikipedia.org/wiki/Benjamin_Franklin" target="_blank" rel="noopener">Benjamin Franklin</a></small>
+          <small class="quote-author only-forest"><a href="https://en.wikipedia.org/wiki/Friedrich_Nietzsche" target="_blank" rel="noopener">Friedrich Nietzsche</a></small>
+          <small class="quote-author only-ocean"><a href="https://en.wikipedia.org/wiki/George_Bernard_Shaw" target="_blank" rel="noopener">George Bernard Shaw</a></small>
+          <small class="quote-author only-violet"><a href="https://en.wikipedia.org/wiki/Robert_Frost" target="_blank" rel="noopener">Robert Frost</a></small>
+          <small class="quote-author only-aurora"><a href="https://en.wikipedia.org/wiki/Carl_Sagan" target="_blank" rel="noopener">Carl Sagan</a></small>
+          <small class="quote-author only-solar"><a href="https://en.wikipedia.org/wiki/Arthur_C._Clarke" target="_blank" rel="noopener">Arthur C. Clarke</a></small>
+          <small class="quote-author only-cosmic"><a href="https://en.wikipedia.org/wiki/Arthur_Eddington" target="_blank" rel="noopener">Arthur Eddington</a></small>
+          <small class="quote-author only-terra"><a href="https://en.wikipedia.org/wiki/Albert_Einstein" target="_blank" rel="noopener">Albert Einstein</a></small>
+        </blockquote>
+
+        <!-- Fractal selector buttons (colored dots) — 8 themes -->
+        <div id="fractals" class="btn-row">
+          <button class="fractal-btn first active" data-theme="ember" title="Sierpinski Triangle"></button>
+          <button class="fractal-btn" data-theme="forest" title="Fractal Plant"></button>
+          <button class="fractal-btn" data-theme="ocean" title="Koch Snowflake"></button>
+          <button class="fractal-btn" data-theme="violet" title="Dragon Curve"></button>
+          <button class="fractal-btn" data-theme="aurora" title="Julia Set"></button>
+          <button class="fractal-btn" data-theme="solar" title="Lévy C Curve"></button>
+          <button class="fractal-btn" data-theme="cosmic" title="Hilbert Curve"></button>
+          <button class="fractal-btn last" data-theme="terra" title="Barnsley Fern"></button>
+        </div>
+
+        <!-- Canvas controls (trash + pause/play) -->
+        <div id="controls" class="btn-row">
+          <button id="btn-trash" class="ctrl-btn first" title="Clear canvas">&#128465;</button>
+          <button id="btn-pause" class="ctrl-btn last" title="Pause">&#9646;&#9646;</button>
+        </div>
+
+        <small class="hint">(click the canvas)</small>
+      </div>
+
+      <div id="more" class="card">
+        <p class="tagline">
+          Researching AI safety. Writing about what matters.
+          Interested in music, poetry, and philosophy.
+        </p>
+
+        <h2>Interests</h2>
+        <ul class="interests">
+          <li>AI Safety &amp; Alignment</li>
+          <li>Philosophy of Mind</li>
+          <li>Music</li>
+          <li>Poetry</li>
+        </ul>
+
+        <div class="more-links">
+          <a href="https://linkedin.com/in/brandonsayler" title="LinkedIn">LinkedIn</a>
+          <span class="sep">&middot;</span>
+          <a href="https://sayler.substack.com" title="Substack">Substack</a>
+          <span class="sep">&middot;</span>
+          <a href="https://stats.fm/sayler" title="stats.fm">stats.fm</a>
+          <span class="sep">&middot;</span>
+          <a href="https://x.com/brandonsayler" title="X / Twitter">Twitter</a>
+        </div>
+
+        <a id="toggle-less" href="#">&laquo; back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/canvas.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

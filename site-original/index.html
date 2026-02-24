@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brandon Sayler</title>
+  <meta name="description" content="Brandon Sayler — AI safety researcher, writer, musician, philosopher.">
+  <meta name="author" content="Brandon Sayler">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-ember">
+  <canvas id="canvas"></canvas>
+
+  <div id="overlay">
+    <div id="card-container">
+      <div id="card" class="card">
+        <h1>Brandon Sayler</h1>
+        <ul class="links">
+          <li><span class="arrow">&rarr;</span><a href="#" data-placeholder="substack">Writer</a></li>
+          <li><span class="arrow">&rarr;</span><a href="https://x.com/" data-placeholder="twitter">Tweeter</a></li>
+          <li><span class="arrow">&rarr;</span><a href="#" id="toggle-more">more &raquo;</a></li>
+        </ul>
+
+        <blockquote id="quote-block">
+          <p id="quote-text"></p>
+          <small id="quote-author"></small>
+        </blockquote>
+
+        <div id="themes" class="btn-row">
+          <button class="theme-btn active" data-theme="ember" title="Ember"></button>
+          <button class="theme-btn" data-theme="forest" title="Forest"></button>
+          <button class="theme-btn" data-theme="ocean" title="Ocean"></button>
+          <button class="theme-btn" data-theme="violet" title="Violet"></button>
+        </div>
+
+        <small class="hint">(click the canvas)</small>
+      </div>
+
+      <div id="more" class="card">
+        <p class="tagline">
+          Researching AI safety. Writing about what matters.
+          Interested in music, poetry, and philosophy.
+        </p>
+
+        <h2>Interests</h2>
+        <ul class="interests">
+          <li>AI Safety &amp; Alignment</li>
+          <li>Philosophy of Mind</li>
+          <li>Music</li>
+          <li>Poetry</li>
+        </ul>
+
+        <div class="more-links">
+          <a href="#" data-placeholder="substack" title="Substack">Substack</a>
+          <span class="sep">&middot;</span>
+          <a href="https://x.com/" data-placeholder="twitter" title="X / Twitter">Twitter</a>
+        </div>
+
+        <a id="toggle-less" href="#">&laquo; back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/canvas.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

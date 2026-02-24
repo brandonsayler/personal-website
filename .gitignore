@@ -1,0 +1,11 @@
+.DS_Store
+*.DS_Store
+node_modules/
+
+# Reference files (not part of the site)
+So8res.html
+So8res_files/
+so8res.com/
+
+# Original full-res photos (copies in site/img/)
+brandon's photos/
