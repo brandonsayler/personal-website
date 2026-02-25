@@ -71,6 +71,16 @@ a:hover {
 .theme-terra a { color: #795548; }
 .theme-terra a:visited { color: #a1887f; }
 
+/* Nebula (indigo) */
+.theme-nebula { --accent: #283593; --accent-light: #5c6bc0; }
+.theme-nebula a { color: #283593; }
+.theme-nebula a:visited { color: #5c6bc0; }
+
+/* Glacier (ice blue) */
+.theme-glacier { --accent: #0277bd; --accent-light: #4fc3f7; }
+.theme-glacier a { color: #0277bd; }
+.theme-glacier a:visited { color: #4fc3f7; }
+
 /* === Canvas === */
 #canvas {
   position: fixed;
@@ -121,6 +131,10 @@ html.moved #dot {
 .theme-cosmic #dot { fill: #c2185b; }
 .theme-terra #halo { stroke: #bcaaa4; }
 .theme-terra #dot { fill: #795548; }
+.theme-nebula #halo { stroke: #7986cb; }
+.theme-nebula #dot { fill: #283593; }
+.theme-glacier #halo { stroke: #81d4fa; }
+.theme-glacier #dot { fill: #0277bd; }
 
 /* === Overlay / Card === */
 #overlay {
@@ -175,7 +189,9 @@ html.moved #dot {
 .theme-aurora .only-aurora.theme-photo,
 .theme-solar .only-solar.theme-photo,
 .theme-cosmic .only-cosmic.theme-photo,
-.theme-terra .only-terra.theme-photo {
+.theme-terra .only-terra.theme-photo,
+.theme-nebula .only-nebula.theme-photo,
+.theme-glacier .only-glacier.theme-photo {
   width: 64px;
   height: 64px;
   opacity: 1;
@@ -276,7 +292,11 @@ blockquote {
 .theme-cosmic .only-cosmic.quote-text,
 .theme-cosmic .only-cosmic.quote-author,
 .theme-terra .only-terra.quote-text,
-.theme-terra .only-terra.quote-author {
+.theme-terra .only-terra.quote-author,
+.theme-nebula .only-nebula.quote-text,
+.theme-nebula .only-nebula.quote-author,
+.theme-glacier .only-glacier.quote-text,
+.theme-glacier .only-glacier.quote-author {
   height: auto;
   opacity: 1;
 }
@@ -332,6 +352,8 @@ blockquote {
 .fractal-btn[data-theme="solar"]  { background: #ff8f00; }
 .fractal-btn[data-theme="cosmic"] { background: #c2185b; }
 .fractal-btn[data-theme="terra"]  { background: #795548; }
+.fractal-btn[data-theme="nebula"] { background: #283593; }
+.fractal-btn[data-theme="glacier"]{ background: #0277bd; }
 
 /* === Control Buttons (trash + pause) === */
 .ctrl-btn {

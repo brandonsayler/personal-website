@@ -1,4 +1,4 @@
-// L-System Fractal Canvas — 8 fractal types
+// L-System Fractal Canvas — 10 fractal types
 // Click canvas to spawn fractals. Multiple fractal types coexist on the same canvas.
 // Switching fractal type does NOT clear the canvas. Use trash to clear.
 
@@ -181,27 +181,27 @@
     var d = this.stepSize;
 
     switch (sym) {
-      case 'F': t.forward(d); break;
+      case 'F': case 'A': case 'B': t.forward(d); break;
       case 'G': t.go(d); break;
       case '+': t.turn(this.angle); break;
       case '-': t.turn(-this.angle); break;
       case '[': this.states.push(t.save()); break;
       case ']': t.restore(this.states.pop()); break;
       case '0': this.iterate(); break;
-      default:  break; // X, Y, A, B — structural placeholders
+      default:  break; // X, Y — structural placeholders
     }
 
     this.progress++;
 
-    // Keep processing until we draw something (F) or die
-    if (sym === 'F') return;
+    // Keep processing until we draw something (F/A/B) or die
+    if (sym === 'F' || sym === 'A' || sym === 'B') return;
     if (this.queue && this.queue.length > 0 && !this.dead) {
       this.step(false);
     }
   };
 
   // =========================================================================
-  // Fractal definitions — 8 types
+  // Fractal definitions — 10 types
   // =========================================================================
 
   var fractalDefs = {
@@ -219,7 +219,7 @@
         angle: -1/6,
         axiom: 'FX',
         rules: { X: 'Y-FX-FY', Y: 'X+FY+FX' },
-        cap: 9,
+        cap: 12,
         colorWheel: new ColorWheel(
           new Oscillator(0.29 * c % 1, 0.5, 0.265, 0.76)
         ),
@@ -281,7 +281,7 @@
         angle: 0.25,
         axiom: 'FX',
         rules: { X: 'X+YF', Y: 'FX-Y' },
-        cap: 15,
+        cap: 18,
         colorWheel: new ColorWheel(
           new Oscillator(0.25, 0.075, 0.5, 0.075)
         ),
@@ -293,73 +293,36 @@
       return f;
     },
 
-    // JULIA SET (aurora / teal theme) — pixel-based progressive renderer
+    // PENTIGREE (aurora / teal theme) — pentagonal Koch snowflake
+    // 72° angles give unique 5-fold symmetry, distinct from all other fractals
     aurora: function (ctx, x, y, onDie) {
-      var size = 220;
-      var half = size / 2;
-      var ox = Math.round(x - half);
-      var oy = Math.round(y - half);
-      var maxIter = 80;
-      // Cycle through interesting c values
-      var cPresets = [
-        { r: -0.7, i: 0.27015 },
-        { r: -0.8, i: 0.156 },
-        { r: 0.355, i: 0.355 },
-        { r: -0.4, i: 0.6 },
-        { r: 0.285, i: 0.01 }
-      ];
-      var cIdx = Math.floor(Math.random() * cPresets.length);
-      var c = cPresets[cIdx];
-      var row = 0;
-      var dead = false;
-
-      return {
-        dead: false,
-        step: function () {
-          if (dead || row >= size) {
-            this.dead = true;
-            dead = true;
-            if (onDie) onDie();
-            return;
-          }
-          // Render 4 rows per step for speed
-          var endRow = Math.min(row + 4, size);
-          for (var py = row; py < endRow; py++) {
-            for (var px = 0; px < size; px++) {
-              var zr = (px - half) / (half / 1.5);
-              var zi = (py - half) / (half / 1.5);
-              var iter = 0;
-              while (zr * zr + zi * zi < 4 && iter < maxIter) {
-                var tmp = zr * zr - zi * zi + c.r;
-                zi = 2 * zr * zi + c.i;
-                zr = tmp;
-                iter++;
-              }
-              if (iter < maxIter) {
-                var hue = 0.48 + iter / maxIter * 0.15;
-                var sat = 0.7 + 0.3 * (iter / maxIter);
-                var lit = 0.15 + 0.55 * (iter / maxIter);
-                var rgb = hslToRgb(hue, sat, lit);
-                ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
-                ctx.fillRect(ox + px, oy + py, 1, 1);
-              }
-            }
-          }
-          row = endRow;
-        }
-      };
+      return new Fractal({
+        ctx: ctx, x: x, y: y,
+        theta: Math.random(),
+        stepSize: 2,
+        angle: 1/5,     // 72 degrees
+        axiom: 'F-F-F-F-F',
+        rules: { F: 'F-F++F+F-F-F' },
+        cap: 6,
+        colorWheel: new ColorWheel(
+          new Oscillator(0.48, 0.06, 0.3, 0.50),
+          new Oscillator(0, 0.15, 0.3, 0.75),
+          new Oscillator(0, 0.1, 0.25, 0.55)
+        ),
+        onDie: onDie
+      });
     },
 
     // LÉVY C CURVE (solar / amber theme)
     solar: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0,
+        theta: Math.random(),  // random direction each spawn
         stepSize: 2,
         angle: 1/8,     // 45 degrees
         axiom: 'F',
         rules: { F: '+F--F+' },
-        cap: 14,
+        cap: 18,
         colorWheel: new ColorWheel(
           new Oscillator(0.08, 0.04, 0.8, 0.10),
           new Oscillator(0, 0.2, 0.5, 0.85),
@@ -369,31 +332,30 @@
       });
     },
 
-    // HILBERT CURVE (cosmic / pink theme)
+    // GOSPER CURVE / FLOWSNAKE (cosmic / pink theme)
+    // Hexagonal space-filling curve — genuinely generates step by step
     cosmic: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0,
-        stepSize: 5,
-        angle: 0.25,    // 90 degrees
+        theta: Math.random(),
+        stepSize: 3,
+        angle: 1/6,     // 60 degrees
         axiom: 'A',
-        rules: { A: '-BF+AFA+FB-', B: '+AF-BFB-FA+' },
-        cap: 6,
+        rules: { A: 'A-B--B+A++AA+B-', B: '+A-BB--B-A++A+B' },
+        cap: 7,
         colorWheel: new ColorWheel(
-          new Oscillator(0.92, 0.06, 0.7, 0.92),
-          new Oscillator(0, 0.15, 0.4, 0.75),
-          new Oscillator(0, 0.1, 0.5, 0.55)
+          new Oscillator(0.92, 0.06, 0.4, 0.88),
+          new Oscillator(0, 0.15, 0.3, 0.75),
+          new Oscillator(0, 0.1, 0.25, 0.55)
         ),
         onDie: onDie
       });
     },
 
-    // BARNSLEY FERN (terra / brown theme) — IFS random dot plotting
+    // BARNSLEY FERN (terra / brown theme) — IFS random dot plotting (infinite)
     terra: function (ctx, x, y, onDie) {
       var px = 0, py = 0;
-      var totalDots = 50000;
       var dotsDone = 0;
-      var dead = false;
       var scale = 38;
       var offsetX = x;
       var offsetY = y;
@@ -426,23 +388,102 @@
       return {
         dead: false,
         step: function () {
-          if (dead || dotsDone >= totalDots) {
-            this.dead = true;
-            dead = true;
-            if (onDie) onDie();
-            return;
-          }
-          // Plot 80 dots per step
-          var batch = Math.min(80, totalDots - dotsDone);
-          for (var i = 0; i < batch; i++) {
+          // Plot 80 dots per step — never dies, cycles colors
+          for (var i = 0; i < 80; i++) {
             iterate();
             var sx = offsetX + px * scale;
             var sy = offsetY - py * scale; // flip Y (fern grows up)
-            // Color: earthy brown-green gradient based on progress
-            var t = dotsDone / totalDots;
+            // Color: earthy brown-green gradient, cycles every 5000 dots
+            var t = (dotsDone % 5000) / 5000;
             var hue = 0.08 + t * 0.06;
             var sat = 0.45 + t * 0.2;
             var lit = 0.25 + t * 0.2;
+            var rgb = hslToRgb(hue, sat, lit);
+            ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+            ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
+            dotsDone++;
+          }
+        }
+      };
+    },
+
+    // SIERPINSKI PENTAGON (nebula / indigo theme) — IFS chaos game (infinite)
+    // 5 transforms contracting toward pentagon vertices
+    nebula: function (ctx, x, y, onDie) {
+      var px = 0, py = 0;
+      var dotsDone = 0;
+      var scale = 160;
+      var offsetX = x;
+      var offsetY = y;
+      var r = 0.382;          // 1/(1+phi) contraction ratio
+      var oneMinusR = 0.618;  // attraction ratio
+
+      // Regular pentagon vertices (circumradius 1, top-pointing)
+      var vx = [], vy = [];
+      for (var i = 0; i < 5; i++) {
+        var ang = (2 * Math.PI * i / 5) - Math.PI / 2;
+        vx.push(Math.cos(ang));
+        vy.push(Math.sin(ang));
+      }
+
+      function iterate() {
+        var k = Math.floor(Math.random() * 5);
+        px = r * px + oneMinusR * vx[k];
+        py = r * py + oneMinusR * vy[k];
+      }
+
+      return {
+        dead: false,
+        step: function () {
+          for (var i = 0; i < 80; i++) {
+            iterate();
+            var sx = offsetX + px * scale;
+            var sy = offsetY + py * scale;
+            // Color: indigo-violet gradient, cycles every 6000 dots
+            var t = (dotsDone % 6000) / 6000;
+            var hue = 0.68 + t * 0.08;
+            var sat = 0.55 + t * 0.25;
+            var lit = 0.30 + t * 0.25;
+            var rgb = hslToRgb(hue, sat, lit);
+            ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+            ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
+            dotsDone++;
+          }
+        }
+      };
+    },
+
+    // VICSEK CROSS (glacier / ice blue theme) — IFS chaos game (infinite)
+    // 5 transforms: center + 4 cardinal directions at scale 1/3
+    glacier: function (ctx, x, y, onDie) {
+      var px = 0.5, py = 0.5;
+      var dotsDone = 0;
+      var scale = 200;
+      var offsetX = x - scale / 2;
+      var offsetY = y - scale / 2;
+
+      // Contraction centers for Vicsek cross (in [0,1] space)
+      var cx = [0.5, 0.0, 1.0, 0.5, 0.5];
+      var cy = [0.5, 0.5, 0.5, 0.0, 1.0];
+
+      function iterate() {
+        var k = Math.floor(Math.random() * 5);
+        px = px / 3 + cx[k] * 2 / 3;
+        py = py / 3 + cy[k] * 2 / 3;
+      }
+
+      return {
+        dead: false,
+        step: function () {
+          for (var i = 0; i < 80; i++) {
+            iterate();
+            var sx = offsetX + px * scale;
+            var sy = offsetY + py * scale;
+            // Color: ice blue gradient, cycles every 5000 dots
+            var t = (dotsDone % 5000) / 5000;
+            var hue = 0.54 + t * 0.06;
+            var sat = 0.50 + t * 0.30;
+            var lit = 0.35 + t * 0.25;
             var rgb = hslToRgb(hue, sat, lit);
             ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
             ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);

@@ -11,7 +11,7 @@ website 2026/
 │   ├── index.html
 │   ├── css/style.css
 │   ├── js/
-│   │   ├── canvas.js      ← L-system fractal engine (8 fractal types)
+│   │   ├── canvas.js      ← L-system fractal engine (10 fractal types)
 │   │   ├── main.js        ← UI logic, cursor, controls
 │   │   └── canvas-particles.js  ← (unused, from earlier version)
 │   └── img/               ← Theme photos
@@ -22,7 +22,8 @@ website 2026/
 │       ├── yellow.jpg     ← Soares photo (aurora)
 │       ├── red.jpg        ← Soares photo (solar)
 │       ├── green.jpg      ← Soares photo (cosmic)
-│       └── blue.png       ← Soares photo (terra)
+│       ├── blue.png       ← Soares photo (terra, glacier)
+│       └── black.png      ← Soares photo (nebula)
 ├── brandon's photos/      ← Original Brandon photos (full res)
 ├── site-original/         ← Backup of the first version of the site
 ├── So8res.html            ← Saved copy of so8res.com for reference
@@ -36,24 +37,27 @@ website 2026/
 ## Architecture
 
 ### Themes
-Eight color themes, each paired with a fractal type and a fixed quote:
+Ten color themes, each paired with a fractal type and a fixed quote:
 
-| Theme   | Color  | Accent   | Fractal            | Quote Author        |
-|---------|--------|----------|--------------------|---------------------|
-| ember   | red    | #c94925  | Sierpinski Triangle | Benjamin Franklin   |
-| forest  | green  | #3a8c3f  | Fractal Plant      | Friedrich Nietzsche |
-| ocean   | blue   | #1565c0  | Koch Snowflake     | George Bernard Shaw |
-| violet  | purple | #7b1fa2  | Dragon Curve       | Robert Frost        |
-| aurora  | teal   | #00897b  | Julia Set          | Carl Sagan          |
-| solar   | amber  | #ff8f00  | Lévy C Curve       | Arthur C. Clarke    |
-| cosmic  | pink   | #c2185b  | Hilbert Curve      | Arthur Eddington    |
-| terra   | brown  | #795548  | Barnsley Fern      | Albert Einstein     |
+| Theme   | Color    | Accent   | Fractal              | Quote Author        | Infinite? |
+|---------|----------|----------|----------------------|---------------------|-----------|
+| ember   | red      | #c94925  | Sierpinski Triangle  | Benjamin Franklin   | L-system (cap 12, ~12 min/click) |
+| forest  | green    | #3a8c3f  | Fractal Plant        | Friedrich Nietzsche | L-system (cap 8, long) |
+| ocean   | blue     | #1565c0  | Koch Snowflake       | George Bernard Shaw | L-system (cap 9, ~13 min/click) |
+| violet  | purple   | #7b1fa2  | Dragon Curve         | Robert Frost        | L-system (cap 18, ~17 min/click) |
+| aurora  | teal     | #00897b  | Pentigree            | Carl Sagan          | L-system (cap 6, ~2.6 min/click) |
+| solar   | amber    | #ff8f00  | Lévy C Curve         | Arthur C. Clarke    | L-system (cap 18, ~8.7 min/click) |
+| cosmic  | pink     | #c2185b  | Gosper Curve         | Arthur Eddington    | L-system (cap 7, ~7.8 min/click) |
+| terra   | brown    | #795548  | Barnsley Fern        | Albert Einstein     | IFS (truly infinite) |
+| nebula  | indigo   | #283593  | Sierpinski Pentagon  | Oscar Wilde         | IFS (truly infinite) |
+| glacier | ice blue | #0277bd  | Vicsek Cross         | Ralph Waldo Emerson | IFS (truly infinite) |
 
 ### Key Design Decisions
 - **Quotes are fixed per theme**: ember always shows the Franklin quote, forest always shows Nietzsche, etc. They never rotate or cycle.
-- **Canvas persistence**: Switching fractal type does NOT clear the canvas. All eight fractal types can coexist on the same canvas. Only the trash button clears.
+- **Canvas persistence**: Switching fractal type does NOT clear the canvas. All ten fractal types can coexist on the same canvas. Only the trash button clears.
 - **Floating cursor**: SVG dot + halo that follows mouse with 25% interpolation lag, pulsing size via sine wave. Colors match the active theme.
-- **Photos**: One 64x64 photo per theme, floated right in the card. Brandon's photos for the first 4 themes, Soares photos for the new 4.
+- **Photos**: One 64x64 photo per theme, floated right in the card. Brandon's photos for the first 4 themes, Soares photos for the remaining 6.
+- **Infinite generation**: All fractals generate indefinitely. L-systems have high caps (multiple clicks = effectively infinite). IFS fractals (fern, pentagon, cross) are truly infinite — O(1) memory, never stop.
 
 ### Links
 - **AI Safety-ist** → linkedin.com/in/brandonsayler
@@ -69,21 +73,42 @@ The L-system engine uses Soares' "lazy expansion" model:
 - Each fractal has a `cap` limiting total iterations
 - The dragon curve uses **batching**: on iteration reset, it fast-forwards through queue expansion without drawing
 
-Two non-L-system fractals use custom step() methods:
-- **Julia Set**: Pixel-based progressive renderer (4 rows/step, 220x220px area, escape-time coloring)
-- **Barnsley Fern**: IFS random dot plotting (80 dots/step, 50000 total)
+The engine supports A and B as drawing symbols (forward) in addition to F, enabling fractals like the Gosper curve.
+
+Three IFS fractals use custom step() methods (truly infinite, O(1) memory):
+- **Barnsley Fern**: IFS random dot plotting (80 dots/step, never stops, cycles colors every 5000 dots)
+- **Sierpinski Pentagon**: Chaos game on 5 pentagon vertices (contraction ratio 1/(1+phi) ≈ 0.382)
+- **Vicsek Cross**: Chaos game with 5 transforms at center + 4 cardinal directions (scale 1/3)
 
 ### Fractal Parameters
-- **Sierpinski**: axiom `FX`, rules `X→Y-FX-FY, Y→X+FY+FX`, angle -1/6, cap 9
-- **Fractal Plant**: axiom `FX`, rules `X→F-[[X]+X]+F[+FX]-X, F→FF`, angle 25/360 (25°), cap 7, stepSize 2, theta 0.75 (up). Resets to origin each iteration.
-- **Koch Snowflake**: axiom `F++F++F`, rules `F→F-F++F-F`, angle 1/6, cap 9
-- **Dragon Curve**: axiom `FX`, rules `X→X+YF, Y→FX-Y`, angle 0.25, cap 15, stepSize 3. Uses batching on reset.
-- **Julia Set**: 220×220px, maxIter 80, random c preset from 5 options, teal color palette, 4 rows/step
-- **Lévy C Curve**: axiom `F`, rules `F→+F--F+`, angle 1/8 (45°), cap 14, stepSize 2
-- **Hilbert Curve**: axiom `A`, rules `A→-BF+AFA+FB-, B→+AF-BFB-FA+`, angle 0.25 (90°), cap 6, stepSize 5
-- **Barnsley Fern**: IFS with 4 affine transforms (stem 1%, body 85%, left leaf 7%, right leaf 7%), 80 dots/step, 50000 total, scale 38, earthy brown-green gradient
+- **Sierpinski**: axiom `FX`, rules `X→Y-FX-FY, Y→X+FY+FX`, angle -1/6, cap 12 (~177k segments, ~12 min)
+- **Fractal Plant**: axiom `FX`, rules `X→F-[[X]+X]+F[+FX]-X, F→FF`, angle 25/360 (25°), cap 8, stepSize 3, theta 0.75 (up). Resets to origin each iteration.
+- **Koch Snowflake**: axiom `F++F++F`, rules `F→F-F++F-F`, angle 1/6, cap 9 (~197k segments, ~13 min)
+- **Dragon Curve**: axiom `FX`, rules `X→X+YF, Y→FX-Y`, angle 0.25, cap 18 (~131k+ segments, ~17 min), stepSize 3. Uses batching on reset.
+- **Pentigree**: axiom `F-F-F-F-F`, rules `F→F-F++F+F-F-F`, angle 1/5 (72°), cap 6 (~39k segments, ~2.6 min), stepSize 2. Pentagonal Koch snowflake with 5-fold symmetry. Random theta each spawn.
+- **Lévy C Curve**: axiom `F`, rules `F→+F--F+`, angle 1/8 (45°), cap 18 (~131k segments, ~8.7 min), stepSize 2. Random theta each spawn.
+- **Gosper Curve**: axiom `A`, rules `A→A-B--B+A++AA+B-, B→+A-BB--B-A++A+B`, angle 1/6 (60°), cap 7 (~118k segments, ~7.8 min), stepSize 3. Hexagonal space-filling curve (flowsnake). A and B both draw forward. Random theta each spawn.
+- **Barnsley Fern**: IFS with 4 affine transforms (stem 1%, body 85%, left leaf 7%, right leaf 7%), 80 dots/step, infinite, scale 38, earthy brown-green gradient cycling every 5000 dots
+- **Sierpinski Pentagon**: IFS chaos game on regular pentagon, 5 equal-probability transforms, contraction ratio 1/(1+phi) ≈ 0.382, 80 dots/step, infinite, scale 160, indigo-violet gradient cycling every 6000 dots
+- **Vicsek Cross**: IFS chaos game, 5 transforms (center + 4 cardinal), scale 1/3, 80 dots/step, infinite, scale 200, ice blue gradient cycling every 5000 dots
 
 ## Changelog
+
+### v5 (2026-02-25) — Infinite fractal generation + 2 new themes (10 total)
+- **Increased L-system caps for longer generation**: Sierpinski 9→12, Dragon 15→18, Pentigree 5→6, Lévy C 14→18, Gosper 5→7. Each click now generates for 3-17 minutes depending on fractal type.
+- **Made Barnsley Fern infinite**: Removed 50k dot limit. Fern now generates forever with cycling brown-green gradient (modular arithmetic on dot count).
+- **Added Sierpinski Pentagon (nebula / indigo theme)**: IFS chaos game on 5 regular pentagon vertices with contraction ratio 1/(1+phi). Truly infinite O(1) memory. Quote: Oscar Wilde.
+- **Added Vicsek Cross (glacier / ice blue theme)**: IFS chaos game with 5 transforms (center + 4 cardinal directions, scale 1/3). Creates distinctive cross/plus fractal pattern. Truly infinite. Quote: Ralph Waldo Emerson.
+- **10 fractal selector buttons**: Added indigo (nebula) and ice blue (glacier) buttons.
+- **10 fixed quotes**: Added Wilde and Emerson to the existing 8.
+- **Design principle**: All fractals generate indefinitely. L-systems with high caps last 3-17+ min per click; IFS fractals (fern, pentagon, cross) are truly infinite with O(1) memory.
+
+### v4 (2026-02-25) — Replace pixel-based fractals with genuine generators
+- **Replaced Julia Set (aurora) with Pentigree**: The Julia set rendered pixels in an expanding rectangle — it didn't truly "generate." Replaced with a pentagonal Koch snowflake L-system (72° angles, 5-fold symmetry) that builds itself step by step.
+- **Replaced Newton Fractal (cosmic) with Gosper Curve**: Same pixel-revealing problem. Replaced with a hexagonal space-filling L-system (60° angles, flowsnake) that genuinely generates.
+- **Added A/B drawing support to engine**: The Fractal.step() switch now handles A and B as forward-drawing symbols (like F), enabling fractals like the Gosper curve. Updated draw-check to include A/B.
+- **Lévy C random direction**: Each spawn now gets `theta: Math.random()` so curves point in random directions instead of all rightward.
+- **Design principle**: All fractals must genuinely build themselves step by step. No pixel-based image revealing — even "inside-out" pixel ordering is not true generation.
 
 ### v3 (2026-02-24) — 8 themes, new fractals, new links, tree fix
 - **Fixed fractal plant (again)**: Was growing super-vertical because stepSize 6 + F→FF caused exponential trunk length. Fixed: stepSize 2, angle 25° (was 22.5°), cap 7 (was 8). Now fans out properly.
