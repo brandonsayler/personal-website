@@ -1,4 +1,4 @@
-// L-System Fractal Canvas — 10 fractal types
+// L-System Fractal Canvas — 6 fractal types (all L-systems, all multi-colored)
 // Click canvas to spawn fractals. Multiple fractal types coexist on the same canvas.
 // Switching fractal type does NOT clear the canvas. Use trash to clear.
 
@@ -48,18 +48,19 @@
     );
   };
 
-  function ColorWheel(h, s, l) {
+  function ColorWheel(h, s, l, speed) {
     this.h = h;
     this.s = (s !== undefined) ? s : 1;
     this.l = (l !== undefined) ? l : 0.5;
     this.t = 0;
+    this.speed = (speed !== undefined) ? speed : 1/15;
   }
   ColorWheel.prototype.clone = function () {
-    return new ColorWheel(this.h, this.s, this.l);
+    return new ColorWheel(this.h, this.s, this.l, this.speed);
   };
   ColorWheel.prototype.step = function () { this.t++; return this; };
   ColorWheel.prototype.css = function () {
-    var b = this.t / 15;
+    var b = this.t * this.speed;
     var hv = (typeof this.h === 'number') ? this.h : this.h.value(b);
     var sv = (typeof this.s === 'number') ? this.s : this.s.value(b);
     var lv = (typeof this.l === 'number') ? this.l : this.l.value(b);
@@ -107,7 +108,7 @@
   Turtle.prototype.look = function (a) { this.theta = a; };
 
   // =========================================================================
-  // L-System fractal (matches Soares' lazy-expansion model)
+  // L-System fractal (lazy-expansion model)
   // =========================================================================
 
   function Fractal(opts) {
@@ -151,7 +152,7 @@
   Fractal.prototype.step = function (internal) {
     if (this.dead || !this.queue) return;
 
-    // Batching: rush through old segments without drawing (for dragon curve)
+    // Batching: rush through old segments without drawing
     if (!internal && this._batching > 0) {
       var n = Math.min(100, this._batching);
       for (var i = 0; i < n; i++) this.step(true);
@@ -172,8 +173,7 @@
       this.queue = this.queue.concat((expansion || sym).split(''));
     }
 
-    // KEY FIX: When batching (internal), only expand the queue — do NOT
-    // execute drawing actions, increment progress, or recurse.
+    // When batching (internal), only expand — do NOT draw
     if (internal) return;
 
     // Execute the symbol
@@ -181,7 +181,11 @@
     var d = this.stepSize;
 
     switch (sym) {
-      case 'F': case 'A': case 'B': t.forward(d); break;
+      case 'F': case 'A': case 'B':
+        t.forward(d);
+        // Per-segment color stepping for multi-color effect
+        this.color = this.colors.step().css();
+        break;
       case 'G': t.go(d); break;
       case '+': t.turn(this.angle); break;
       case '-': t.turn(-this.angle); break;
@@ -201,100 +205,76 @@
   };
 
   // =========================================================================
-  // Fractal definitions — 10 types
+  // Fractal definitions — 6 types (all L-systems, all multi-colored)
   // =========================================================================
 
   var fractalDefs = {
-    _triCounter: 0,
 
-    // SIERPINSKI TRIANGLE (ember / red theme)
+    // HILBERT CURVE (ember / red theme)
+    // Space-filling curve with right-angle meanders, 90° turns
     ember: function (ctx, x, y, onDie) {
-      var c = fractalDefs._triCounter;
-      var hueOff = (c % 6) / 6;
-      fractalDefs._triCounter = c + 1;
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: hueOff,
-        stepSize: 1,
-        angle: -1/6,
-        axiom: 'FX',
-        rules: { X: 'Y-FX-FY', Y: 'X+FY+FX' },
-        cap: 12,
+        theta: Math.random(),
+        stepSize: 3,
+        angle: 1/4,     // 90 degrees
+        axiom: 'X',
+        rules: { X: '-YF+XFX+FY-', Y: '+XF-YFY-FX+' },
+        cap: 9,
         colorWheel: new ColorWheel(
-          new Oscillator(0.29 * c % 1, 0.5, 0.265, 0.76)
+          new Oscillator(0, 0.15, 0.3, 0.03),
+          new Oscillator(0, 0.1, 0.25, 0.85),
+          new Oscillator(0, 0.12, 0.35, 0.5),
+          1/500
         ),
         onDie: onDie
       });
     },
 
-    // FRACTAL PLANT / TREE (forest / green theme)
-    // Matches Soares' "hidden" fractal: drift resetFn + negative angle
-    forest: function (ctx, x, y, onDie) {
-      return new Fractal({
-        ctx: ctx, x: x, y: y,
-        theta: 0.75,        // pointing up
-        stepSize: 3,         // matches Soares
-        angle: -25 / 360,   // negative 25° — Soares' exact angle
-        axiom: 'FX',
-        rules: { X: 'F-[[X]+X]+F[+FX]-X', F: 'FF' },
-        cap: 8,
-        colorWheel: new ColorWheel(
-          new Oscillator(0.67, 0.09, -0.4, 0.23)
-        ),
-        resetFn: function (turtle, stepSize, ox, oy, progress, initTheta) {
-          // Soares' drift: shift sideways each iteration for fanning effect
-          turtle.jump(
-            turtle.x + 0.5 * stepSize * Math.pow(Math.abs(progress), 0.5),
-            oy
-          );
-          turtle.look(initTheta);
-        },
-        onDie: onDie
-      });
-    },
-
-    // KOCH SNOWFLAKE (ocean / blue theme)
+    // SIERPINSKI ARROWHEAD (ocean / blue theme)
+    // Triangular space-filling curve, 60° turns. A and B both draw forward.
     ocean: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0,
-        stepSize: 1,
-        angle: 1/6,
-        axiom: 'F++F++F',
-        rules: { F: 'F-F++F-F' },
-        cap: 9,
+        theta: Math.random(),
+        stepSize: 2,
+        angle: 1/6,     // 60 degrees
+        axiom: 'A',
+        rules: { A: '+B-A-B+', B: '-A+B+A-' },
+        cap: 11,
         colorWheel: new ColorWheel(
-          new Oscillator(0.125, 0.08, 1, 0.54),
-          1,
-          new Oscillator(0.25, 0.125, 0.5, 0.625)
+          new Oscillator(0, 0.2, 0.3, 0.58),
+          new Oscillator(0, 0.15, 0.25, 0.75),
+          new Oscillator(0, 0.1, 0.3, 0.5),
+          1/400
         ),
         onDie: onDie
       });
     },
 
-    // DRAGON CURVE (violet / purple theme)
+    // TERDRAGON (violet / purple theme)
+    // Triple dragon curve with 120° turns, creates triangular tiling
     violet: function (ctx, x, y, onDie) {
-      var f = new Fractal({
+      return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0,
-        stepSize: 3,
-        angle: 0.25,
-        axiom: 'FX',
-        rules: { X: 'X+YF', Y: 'FX-Y' },
-        cap: 18,
+        theta: Math.random(),
+        stepSize: 2,
+        angle: 1/3,     // 120 degrees
+        axiom: 'F',
+        rules: { F: 'F+F-F' },
+        cap: 12,
         colorWheel: new ColorWheel(
-          new Oscillator(0.25, 0.075, 0.5, 0.075)
+          new Oscillator(0, 0.2, 0.35, 0.75),
+          new Oscillator(0, 0.15, 0.3, 0.7),
+          new Oscillator(0, 0.1, 0.25, 0.55),
+          1/350
         ),
-        resetFn: function () {
-          f._batching = f.progress;
-        },
         onDie: onDie
       });
-      return f;
     },
 
-    // PENTIGREE (aurora / teal theme) — pentagonal Koch snowflake
-    // 72° angles give unique 5-fold symmetry, distinct from all other fractals
+    // PENTIGREE (aurora / teal theme)
+    // Pentagonal Koch snowflake with 5-fold symmetry, 72° turns
     aurora: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
@@ -305,35 +285,38 @@
         rules: { F: 'F-F++F+F-F-F' },
         cap: 6,
         colorWheel: new ColorWheel(
-          new Oscillator(0.48, 0.06, 0.3, 0.50),
-          new Oscillator(0, 0.15, 0.3, 0.75),
-          new Oscillator(0, 0.1, 0.25, 0.55)
+          new Oscillator(0, 0.35, 0.4, 0.50),
+          new Oscillator(0, 0.15, 0.3, 0.8),
+          new Oscillator(0, 0.1, 0.25, 0.55),
+          1/400
         ),
         onDie: onDie
       });
     },
 
-    // LÉVY C CURVE (solar / amber theme)
+    // LEVY C CURVE (solar / amber theme)
+    // Self-similar fractal dust, 45° turns
     solar: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: Math.random(),  // random direction each spawn
+        theta: Math.random(),
         stepSize: 2,
         angle: 1/8,     // 45 degrees
         axiom: 'F',
         rules: { F: '+F--F+' },
         cap: 18,
         colorWheel: new ColorWheel(
-          new Oscillator(0.08, 0.04, 0.8, 0.10),
-          new Oscillator(0, 0.2, 0.5, 0.85),
-          new Oscillator(0, 0.1, 0.3, 0.55)
+          new Oscillator(0, 0.2, 0.35, 0.08),
+          new Oscillator(0, 0.1, 0.25, 0.85),
+          new Oscillator(0, 0.1, 0.3, 0.55),
+          1/350
         ),
         onDie: onDie
       });
     },
 
     // GOSPER CURVE / FLOWSNAKE (cosmic / pink theme)
-    // Hexagonal space-filling curve — genuinely generates step by step
+    // Hexagonal space-filling curve, 60° turns. A and B both draw forward.
     cosmic: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
@@ -344,153 +327,13 @@
         rules: { A: 'A-B--B+A++AA+B-', B: '+A-BB--B-A++A+B' },
         cap: 7,
         colorWheel: new ColorWheel(
-          new Oscillator(0.92, 0.06, 0.4, 0.88),
+          new Oscillator(0, 0.25, 0.35, 0.88),
           new Oscillator(0, 0.15, 0.3, 0.75),
-          new Oscillator(0, 0.1, 0.25, 0.55)
+          new Oscillator(0, 0.1, 0.25, 0.55),
+          1/450
         ),
         onDie: onDie
       });
-    },
-
-    // BARNSLEY FERN (terra / brown theme) — IFS random dot plotting (infinite)
-    terra: function (ctx, x, y, onDie) {
-      var px = 0, py = 0;
-      var dotsDone = 0;
-      var scale = 38;
-      var offsetX = x;
-      var offsetY = y;
-
-      // Barnsley fern affine transforms with probabilities
-      function iterate() {
-        var r = Math.random();
-        var nx, ny;
-        if (r < 0.01) {
-          // Stem
-          nx = 0;
-          ny = 0.16 * py;
-        } else if (r < 0.86) {
-          // Main body (successively smaller leaflets)
-          nx = 0.85 * px + 0.04 * py;
-          ny = -0.04 * px + 0.85 * py + 1.6;
-        } else if (r < 0.93) {
-          // Largest left leaflet
-          nx = 0.20 * px - 0.26 * py;
-          ny = 0.23 * px + 0.22 * py + 1.6;
-        } else {
-          // Largest right leaflet
-          nx = -0.15 * px + 0.28 * py;
-          ny = 0.26 * px + 0.24 * py + 0.44;
-        }
-        px = nx;
-        py = ny;
-      }
-
-      return {
-        dead: false,
-        step: function () {
-          // Plot 80 dots per step — never dies, cycles colors
-          for (var i = 0; i < 80; i++) {
-            iterate();
-            var sx = offsetX + px * scale;
-            var sy = offsetY - py * scale; // flip Y (fern grows up)
-            // Color: earthy brown-green gradient, cycles every 5000 dots
-            var t = (dotsDone % 5000) / 5000;
-            var hue = 0.08 + t * 0.06;
-            var sat = 0.45 + t * 0.2;
-            var lit = 0.25 + t * 0.2;
-            var rgb = hslToRgb(hue, sat, lit);
-            ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
-            ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
-            dotsDone++;
-          }
-        }
-      };
-    },
-
-    // SIERPINSKI PENTAGON (nebula / indigo theme) — IFS chaos game (infinite)
-    // 5 transforms contracting toward pentagon vertices
-    nebula: function (ctx, x, y, onDie) {
-      var px = 0, py = 0;
-      var dotsDone = 0;
-      var scale = 160;
-      var offsetX = x;
-      var offsetY = y;
-      var r = 0.382;          // 1/(1+phi) contraction ratio
-      var oneMinusR = 0.618;  // attraction ratio
-
-      // Regular pentagon vertices (circumradius 1, top-pointing)
-      var vx = [], vy = [];
-      for (var i = 0; i < 5; i++) {
-        var ang = (2 * Math.PI * i / 5) - Math.PI / 2;
-        vx.push(Math.cos(ang));
-        vy.push(Math.sin(ang));
-      }
-
-      function iterate() {
-        var k = Math.floor(Math.random() * 5);
-        px = r * px + oneMinusR * vx[k];
-        py = r * py + oneMinusR * vy[k];
-      }
-
-      return {
-        dead: false,
-        step: function () {
-          for (var i = 0; i < 80; i++) {
-            iterate();
-            var sx = offsetX + px * scale;
-            var sy = offsetY + py * scale;
-            // Color: indigo-violet gradient, cycles every 6000 dots
-            var t = (dotsDone % 6000) / 6000;
-            var hue = 0.68 + t * 0.08;
-            var sat = 0.55 + t * 0.25;
-            var lit = 0.30 + t * 0.25;
-            var rgb = hslToRgb(hue, sat, lit);
-            ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
-            ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
-            dotsDone++;
-          }
-        }
-      };
-    },
-
-    // VICSEK CROSS (glacier / ice blue theme) — IFS chaos game (infinite)
-    // 5 transforms: center + 4 cardinal directions at scale 1/3
-    glacier: function (ctx, x, y, onDie) {
-      var px = 0.5, py = 0.5;
-      var dotsDone = 0;
-      var scale = 200;
-      var offsetX = x - scale / 2;
-      var offsetY = y - scale / 2;
-
-      // Contraction centers for Vicsek cross (in [0,1] space)
-      var cx = [0.5, 0.0, 1.0, 0.5, 0.5];
-      var cy = [0.5, 0.5, 0.5, 0.0, 1.0];
-
-      function iterate() {
-        var k = Math.floor(Math.random() * 5);
-        px = px / 3 + cx[k] * 2 / 3;
-        py = py / 3 + cy[k] * 2 / 3;
-      }
-
-      return {
-        dead: false,
-        step: function () {
-          for (var i = 0; i < 80; i++) {
-            iterate();
-            var sx = offsetX + px * scale;
-            var sy = offsetY + py * scale;
-            // Color: ice blue gradient, cycles every 5000 dots
-            var t = (dotsDone % 5000) / 5000;
-            var hue = 0.54 + t * 0.06;
-            var sat = 0.50 + t * 0.30;
-            var lit = 0.35 + t * 0.25;
-            var rgb = hslToRgb(hue, sat, lit);
-            ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
-            ctx.fillRect(Math.round(sx), Math.round(sy), 1, 1);
-            dotsDone++;
-          }
-        }
-      };
     }
   };
 
@@ -536,7 +379,6 @@
   }
 
   function spawnFractal(x, y) {
-    // If paused, unpause and clear old fractals (matches Soares behavior)
     if (paused) {
       activeFractals = {};
       paused = false;

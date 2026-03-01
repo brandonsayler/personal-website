@@ -20,17 +20,13 @@
   <div id="overlay">
     <div id="card-container">
       <div id="card" class="card">
-        <!-- Theme photos (one visible per theme) -->
+        <!-- Theme photos (one visible per theme, Brandon's photos doubled) -->
         <img class="theme-photo only-ember" src="img/brandon-1.jpg" alt="">
-        <img class="theme-photo only-forest" src="img/brandon-3.jpg" alt="">
         <img class="theme-photo only-ocean" src="img/brandon-2.jpg" alt="">
-        <img class="theme-photo only-violet" src="img/brandon-4.png" alt="">
-        <img class="theme-photo only-aurora" src="img/yellow.jpg" alt="">
-        <img class="theme-photo only-solar" src="img/red.jpg" alt="">
-        <img class="theme-photo only-cosmic" src="img/green.jpg" alt="">
-        <img class="theme-photo only-terra" src="img/blue.png" alt="">
-        <img class="theme-photo only-nebula" src="img/black.png" alt="">
-        <img class="theme-photo only-glacier" src="img/blue.png" alt="">
+        <img class="theme-photo only-violet" src="img/brandon-3.jpg" alt="">
+        <img class="theme-photo only-aurora" src="img/brandon-4.png" alt="">
+        <img class="theme-photo only-solar" src="img/brandon-1.jpg" alt="">
+        <img class="theme-photo only-cosmic" src="img/brandon-2.jpg" alt="">
 
         <h1>Brandon Sayler</h1>
         <ul class="links">
@@ -41,13 +37,10 @@
           <li><span class="arrow">&rarr;</span><a href="#" id="toggle-more">more &raquo;</a></li>
         </ul>
 
-        <!-- Fixed quotes per theme (never change, shown/hidden by CSS) -->
+        <!-- Fixed quotes per theme -->
         <blockquote>
           <span class="quote-text only-ember">
             The noblest question in the world is: What good may I do in it?
-          </span>
-          <span class="quote-text only-forest">
-            He who has a why to live can bear almost any how.
           </span>
           <span class="quote-text only-ocean">
             The reasonable man adapts himself to the world; the unreasonable
@@ -66,39 +59,22 @@
           <span class="quote-text only-cosmic">
             Not only is the universe stranger than we imagine, it is stranger than we can imagine.
           </span>
-          <span class="quote-text only-terra">
-            Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.
-          </span>
-          <span class="quote-text only-nebula">
-            We are all in the gutter, but some of us are looking at the stars.
-          </span>
-          <span class="quote-text only-glacier">
-            Do not go where the path may lead, go instead where there is no path and leave a trail.
-          </span>
           <small class="quote-author only-ember"><a href="https://en.wikipedia.org/wiki/Benjamin_Franklin" target="_blank" rel="noopener">Benjamin Franklin</a></small>
-          <small class="quote-author only-forest"><a href="https://en.wikipedia.org/wiki/Friedrich_Nietzsche" target="_blank" rel="noopener">Friedrich Nietzsche</a></small>
           <small class="quote-author only-ocean"><a href="https://en.wikipedia.org/wiki/George_Bernard_Shaw" target="_blank" rel="noopener">George Bernard Shaw</a></small>
           <small class="quote-author only-violet"><a href="https://en.wikipedia.org/wiki/Robert_Frost" target="_blank" rel="noopener">Robert Frost</a></small>
           <small class="quote-author only-aurora"><a href="https://en.wikipedia.org/wiki/Carl_Sagan" target="_blank" rel="noopener">Carl Sagan</a></small>
           <small class="quote-author only-solar"><a href="https://en.wikipedia.org/wiki/Arthur_C._Clarke" target="_blank" rel="noopener">Arthur C. Clarke</a></small>
           <small class="quote-author only-cosmic"><a href="https://en.wikipedia.org/wiki/Arthur_Eddington" target="_blank" rel="noopener">Arthur Eddington</a></small>
-          <small class="quote-author only-terra"><a href="https://en.wikipedia.org/wiki/Albert_Einstein" target="_blank" rel="noopener">Albert Einstein</a></small>
-          <small class="quote-author only-nebula"><a href="https://en.wikipedia.org/wiki/Oscar_Wilde" target="_blank" rel="noopener">Oscar Wilde</a></small>
-          <small class="quote-author only-glacier"><a href="https://en.wikipedia.org/wiki/Ralph_Waldo_Emerson" target="_blank" rel="noopener">Ralph Waldo Emerson</a></small>
         </blockquote>
 
-        <!-- Fractal selector buttons (colored dots) — 8 themes -->
+        <!-- Fractal selector buttons (colored dots) — 6 themes -->
         <div id="fractals" class="btn-row">
-          <button class="fractal-btn first active" data-theme="ember" title="Sierpinski Triangle"></button>
-          <button class="fractal-btn" data-theme="forest" title="Fractal Plant"></button>
-          <button class="fractal-btn" data-theme="ocean" title="Koch Snowflake"></button>
-          <button class="fractal-btn" data-theme="violet" title="Dragon Curve"></button>
+          <button class="fractal-btn first active" data-theme="ember" title="Hilbert Curve"></button>
+          <button class="fractal-btn" data-theme="ocean" title="Sierpinski Arrowhead"></button>
+          <button class="fractal-btn" data-theme="violet" title="Terdragon"></button>
           <button class="fractal-btn" data-theme="aurora" title="Pentigree"></button>
           <button class="fractal-btn" data-theme="solar" title="Lévy C Curve"></button>
-          <button class="fractal-btn" data-theme="cosmic" title="Gosper Curve"></button>
-          <button class="fractal-btn" data-theme="terra" title="Barnsley Fern"></button>
-          <button class="fractal-btn" data-theme="nebula" title="Sierpinski Pentagon"></button>
-          <button class="fractal-btn last" data-theme="glacier" title="Vicsek Cross"></button>
+          <button class="fractal-btn last" data-theme="cosmic" title="Gosper Curve"></button>
         </div>
 
         <!-- Canvas controls (trash + pause/play) -->
@@ -106,6 +82,11 @@
           <button id="btn-trash" class="ctrl-btn first" title="Clear canvas">&#128465;</button>
           <button id="btn-pause" class="ctrl-btn last" title="Pause">&#9646;&#9646;</button>
         </div>
+
+        <!-- Wikipedia link for current fractal -->
+        <a id="fractal-wiki" class="fractal-wiki" href="https://en.wikipedia.org/wiki/Hilbert_curve" target="_blank" rel="noopener">
+          Hilbert Curve
+        </a>
 
         <small class="hint">(click the canvas)</small>
       </div>

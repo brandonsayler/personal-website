@@ -25,7 +25,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* === Theme Colors (8 themes) === */
+/* === Theme Colors (6 themes) === */
 :root {
   --card-bg: rgba(250, 250, 250, 0.82);
   --card-shadow: rgba(0, 0, 0, 0.12);
@@ -35,11 +35,6 @@ a:hover {
 .theme-ember { --accent: #c94925; --accent-light: #e8a08e; }
 .theme-ember a { color: #c94925; }
 .theme-ember a:visited { color: #e8a08e; }
-
-/* Forest (green) */
-.theme-forest { --accent: #3a8c3f; --accent-light: #7ac67e; }
-.theme-forest a { color: #3a8c3f; }
-.theme-forest a:visited { color: #7ac67e; }
 
 /* Ocean (blue) */
 .theme-ocean { --accent: #1565c0; --accent-light: #64b5f6; }
@@ -65,21 +60,6 @@ a:hover {
 .theme-cosmic { --accent: #c2185b; --accent-light: #f06292; }
 .theme-cosmic a { color: #c2185b; }
 .theme-cosmic a:visited { color: #f06292; }
-
-/* Terra (brown) */
-.theme-terra { --accent: #795548; --accent-light: #a1887f; }
-.theme-terra a { color: #795548; }
-.theme-terra a:visited { color: #a1887f; }
-
-/* Nebula (indigo) */
-.theme-nebula { --accent: #283593; --accent-light: #5c6bc0; }
-.theme-nebula a { color: #283593; }
-.theme-nebula a:visited { color: #5c6bc0; }
-
-/* Glacier (ice blue) */
-.theme-glacier { --accent: #0277bd; --accent-light: #4fc3f7; }
-.theme-glacier a { color: #0277bd; }
-.theme-glacier a:visited { color: #4fc3f7; }
 
 /* === Canvas === */
 #canvas {
@@ -117,8 +97,6 @@ html.moved #dot {
 /* Cursor colors per theme */
 .theme-ember #halo { stroke: #fdd017; }
 .theme-ember #dot { fill: #fa0; }
-.theme-forest #halo { stroke: #a5dd35; }
-.theme-forest #dot { fill: #3a8c3f; }
 .theme-ocean #halo { stroke: #88eeee; }
 .theme-ocean #dot { fill: #6cc; }
 .theme-violet #halo { stroke: #ba68c8; }
@@ -129,12 +107,6 @@ html.moved #dot {
 .theme-solar #dot { fill: #ff8f00; }
 .theme-cosmic #halo { stroke: #f48fb1; }
 .theme-cosmic #dot { fill: #c2185b; }
-.theme-terra #halo { stroke: #bcaaa4; }
-.theme-terra #dot { fill: #795548; }
-.theme-nebula #halo { stroke: #7986cb; }
-.theme-nebula #dot { fill: #283593; }
-.theme-glacier #halo { stroke: #81d4fa; }
-.theme-glacier #dot { fill: #0277bd; }
 
 /* === Overlay / Card === */
 #overlay {
@@ -183,15 +155,11 @@ html.moved #dot {
 
 /* Show the active theme's photo */
 .theme-ember .only-ember.theme-photo,
-.theme-forest .only-forest.theme-photo,
 .theme-ocean .only-ocean.theme-photo,
 .theme-violet .only-violet.theme-photo,
 .theme-aurora .only-aurora.theme-photo,
 .theme-solar .only-solar.theme-photo,
-.theme-cosmic .only-cosmic.theme-photo,
-.theme-terra .only-terra.theme-photo,
-.theme-nebula .only-nebula.theme-photo,
-.theme-glacier .only-glacier.theme-photo {
+.theme-cosmic .only-cosmic.theme-photo {
   width: 64px;
   height: 64px;
   opacity: 1;
@@ -279,8 +247,6 @@ blockquote {
 /* Show active theme's quote */
 .theme-ember .only-ember.quote-text,
 .theme-ember .only-ember.quote-author,
-.theme-forest .only-forest.quote-text,
-.theme-forest .only-forest.quote-author,
 .theme-ocean .only-ocean.quote-text,
 .theme-ocean .only-ocean.quote-author,
 .theme-violet .only-violet.quote-text,
@@ -290,13 +256,7 @@ blockquote {
 .theme-solar .only-solar.quote-text,
 .theme-solar .only-solar.quote-author,
 .theme-cosmic .only-cosmic.quote-text,
-.theme-cosmic .only-cosmic.quote-author,
-.theme-terra .only-terra.quote-text,
-.theme-terra .only-terra.quote-author,
-.theme-nebula .only-nebula.quote-text,
-.theme-nebula .only-nebula.quote-author,
-.theme-glacier .only-glacier.quote-text,
-.theme-glacier .only-glacier.quote-author {
+.theme-cosmic .only-cosmic.quote-author {
   height: auto;
   opacity: 1;
 }
@@ -343,17 +303,13 @@ blockquote {
   opacity: 0.5;
 }
 
-/* Fractal button colors (8 themes) */
+/* Fractal button colors (6 themes) */
 .fractal-btn[data-theme="ember"]  { background: #c94925; }
-.fractal-btn[data-theme="forest"] { background: #3a8c3f; }
 .fractal-btn[data-theme="ocean"]  { background: #1565c0; }
 .fractal-btn[data-theme="violet"] { background: #7b1fa2; }
 .fractal-btn[data-theme="aurora"] { background: #00897b; }
 .fractal-btn[data-theme="solar"]  { background: #ff8f00; }
 .fractal-btn[data-theme="cosmic"] { background: #c2185b; }
-.fractal-btn[data-theme="terra"]  { background: #795548; }
-.fractal-btn[data-theme="nebula"] { background: #283593; }
-.fractal-btn[data-theme="glacier"]{ background: #0277bd; }
 
 /* === Control Buttons (trash + pause) === */
 .ctrl-btn {
@@ -393,16 +349,28 @@ blockquote {
   visibility: visible;
 }
 
+/* === Wikipedia fractal link === */
+.fractal-wiki {
+  display: block;
+  clear: both;
+  padding-top: 1em;
+  font-family: sans-serif;
+  font-size: 0.72em;
+  opacity: 0.45;
+  transition: opacity 0.3s;
+}
+.fractal-wiki:hover {
+  opacity: 0.8;
+}
+
 /* === Hint === */
 .hint {
   display: block;
   font-size: 0.68em;
   opacity: 0.4;
   text-align: right;
-  margin-top: 1em;
+  margin-top: 0.4em;
   font-family: sans-serif;
-  clear: both;
-  padding-top: 1em;
 }
 
 /* === More panel === */

@@ -4,10 +4,27 @@
   'use strict';
 
   // =========================================================================
-  // Fixed quotes — each theme always shows the same quote
+  // Wikipedia links per fractal theme
   // =========================================================================
-  // Quotes are embedded in the HTML per-theme using .only-{theme} classes.
-  // No cycling or rotation needed. Switching themes shows the matching quote.
+
+  var wikiLinks = {
+    ember:  { name: 'Hilbert Curve',          url: 'https://en.wikipedia.org/wiki/Hilbert_curve' },
+    ocean:  { name: 'Sierpinski Arrowhead',    url: 'https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve' },
+    violet: { name: 'Terdragon',               url: 'https://en.wikipedia.org/wiki/Terdragon' },
+    aurora: { name: 'Pentigree',               url: 'https://en.wikipedia.org/wiki/N-flake' },
+    solar:  { name: 'L\u00e9vy C Curve',       url: 'https://en.wikipedia.org/wiki/L%C3%A9vy_C_curve' },
+    cosmic: { name: 'Gosper Curve',            url: 'https://en.wikipedia.org/wiki/Gosper_curve' }
+  };
+
+  var fractalWiki = document.getElementById('fractal-wiki');
+
+  function updateWikiLink(theme) {
+    var info = wikiLinks[theme];
+    if (info && fractalWiki) {
+      fractalWiki.href = info.url;
+      fractalWiki.textContent = info.name;
+    }
+  }
 
   // =========================================================================
   // Theme switching
@@ -22,6 +39,8 @@
       btn.classList.add('active');
       // Switch fractal type (does NOT clear canvas — fractals coexist)
       if (window.setFractalTheme) window.setFractalTheme(theme);
+      // Update Wikipedia link
+      updateWikiLink(theme);
     });
   });
 
