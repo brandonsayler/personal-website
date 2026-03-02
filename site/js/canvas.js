@@ -215,7 +215,7 @@
     ember: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0.75 + (Math.random() - 0.5) * 0.05,
+        theta: Math.random(),
         stepSize: 2,
         angle: 1/4,     // 90 degrees
         axiom: 'F+F+F+F',
@@ -231,17 +231,18 @@
       });
     },
 
-    // MINKOWSKI SAUSAGE (ocean / blue theme)
-    // Bumpy recursive curve, 90° turns
+    // JULIA DENDRITE (ocean / blue theme)
+    // Branching dendrite pattern mimicking Julia set structure.
+    // 4 arms radiate at 90° intervals, each branches ±30° while growing outward.
     ocean: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0.75 + (Math.random() - 0.5) * 0.05,
+        theta: Math.random(),
         stepSize: 2,
-        angle: 1/4,     // 90 degrees
-        axiom: 'F',
-        rules: { F: 'F+F-F-F+F' },
-        cap: 8,
+        angle: 1/12,    // 30 degrees
+        axiom: '[X]+++[X]+++[X]+++[X]',
+        rules: { X: 'F[+X][-X]FX', F: 'FF' },
+        cap: 7,
         colorWheel: new ColorWheel(
           new Oscillator(0, 0.04, 0.3, 0.58),
           new Oscillator(0, 0.06, 0.25, 0.72),
@@ -257,7 +258,7 @@
     violet: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0.75 + (Math.random() - 0.5) * 0.05,
+        theta: Math.random(),
         stepSize: 2,
         angle: 1/3,     // 120 degrees
         axiom: 'F',
@@ -278,7 +279,7 @@
     aurora: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0.75 + (Math.random() - 0.5) * 0.05,
+        theta: Math.random(),
         stepSize: 2,
         angle: 1/5,     // 72 degrees
         axiom: 'F-F-F-F-F',
@@ -299,7 +300,7 @@
     solar: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0.75 + (Math.random() - 0.5) * 0.05,
+        theta: Math.random(),
         stepSize: 2,
         angle: 1/8,     // 45 degrees
         axiom: 'F',
@@ -320,7 +321,7 @@
     cosmic: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: 0.75 + (Math.random() - 0.5) * 0.05,
+        theta: Math.random(),
         stepSize: 3,
         angle: 1/6,     // 60 degrees
         axiom: 'A',
@@ -448,6 +449,28 @@
 
   window.hasActiveFractals = function () {
     return Object.keys(activeFractals).length > 0;
+  };
+
+  // Easter egg: spawn all 6 fractal types from canvas center
+  window.spawnAllFractalsAtCenter = function () {
+    if (paused) {
+      activeFractals = {};
+      paused = false;
+    }
+    var cx = W / 2;
+    var cy = H / 2;
+    var themes = Object.keys(fractalDefs);
+    for (var i = 0; i < themes.length; i++) {
+      (function () {
+        fractalId++;
+        var id = fractalId;
+        var factory = fractalDefs[themes[i]];
+        activeFractals[id] = factory(ctx, cx, cy, function () {
+          delete activeFractals[id];
+        });
+      })();
+    }
+    startLoop();
   };
 
   // Init

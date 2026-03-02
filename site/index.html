@@ -7,6 +7,12 @@
   <meta name="description" content="Brandon Sayler — AI safety researcher, writer, musician, philosopher.">
   <meta name="author" content="Brandon Sayler">
   <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Prevent flash of light mode on dark-preference systems
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-mode', 'dark');
+    }
+  </script>
 </head>
 <body class="theme-ember">
   <canvas id="canvas"></canvas>
@@ -20,13 +26,13 @@
   <div id="overlay">
     <div id="card-container">
       <div id="card" class="card">
-        <!-- Theme photos (one visible per theme, Brandon's photos doubled) -->
-        <img class="theme-photo only-ember" src="img/brandon-1.jpg" alt="">
-        <img class="theme-photo only-ocean" src="img/brandon-2.jpg" alt="">
-        <img class="theme-photo only-violet" src="img/brandon-3.jpg" alt="">
-        <img class="theme-photo only-aurora" src="img/brandon-4.png" alt="">
-        <img class="theme-photo only-solar" src="img/brandon-1.jpg" alt="">
-        <img class="theme-photo only-cosmic" src="img/brandon-2.jpg" alt="">
+        <!-- Theme photos (one per theme) -->
+        <img class="theme-photo only-ember" src="img/ember.jpg" alt="">
+        <img class="theme-photo only-ocean" src="img/ocean.jpg" alt="">
+        <img class="theme-photo only-violet" src="img/violet.jpg" alt="">
+        <img class="theme-photo only-aurora" src="img/aurora.jpg" alt="">
+        <img class="theme-photo only-solar" src="img/solar.jpg" alt="">
+        <img class="theme-photo only-cosmic" src="img/cosmic.jpg" alt="">
 
         <h1>Brandon Sayler</h1>
         <ul class="links">
@@ -43,34 +49,32 @@
             The noblest question in the world is: What good may I do in it?
           </span>
           <span class="quote-text only-ocean">
-            The reasonable man adapts himself to the world; the unreasonable
-            one persists in trying to adapt the world to himself. Therefore
-            all progress depends on the unreasonable man.
+            No thread emerges from the empty shuttle, no shed stands ready for picking and beating&mdash;the yarn in the heddles is tangled. Kabir says, let go of the mess, let that poor wish remain unfulfilled.
           </span>
           <span class="quote-text only-violet">
-            Poetry is when an emotion has found its thought and the thought has found words.
+            Why am I timid when my aim is liberation? There is nothing whatsoever that remains difficult as one gets used to it. Thus, through habituation with slight pain, even great pain becomes bearable. Do you not consider the pain of bugs, gadflies, and mosquitoes, of thirst and hunger, and the irritation of a serious rash and the like as insignificant?
           </span>
           <span class="quote-text only-aurora">
-            Somewhere, something incredible is waiting to be known.
+            It was raining outside. The little drops fell on the rooftops, on the streets &hellip; maybe also on the mountains&hellip;.drops of water hung from clotheslines and played tag and sometimes one of them would fall and before it fell it would S&nbsp;T&nbsp;R&nbsp;E&nbsp;T&nbsp;C&nbsp;H and S&nbsp;T&nbsp;R&nbsp;E&nbsp;T&nbsp;C&nbsp;H because you could see it was hard for it to let go. It had been raining for a week&hellip;and the clouds were so swollen they were right on the roof tops.
           </span>
           <span class="quote-text only-solar">
-            Any sufficiently advanced technology is indistinguishable from magic.
+            I don&rsquo;t think any artist really knows why a song gets popular.
           </span>
           <span class="quote-text only-cosmic">
-            Not only is the universe stranger than we imagine, it is stranger than we can imagine.
+            The phrase is: &ldquo;What if it was a gift?&rdquo; Whatever happens to you, no matter how bad, no matter how bleak you feel, ask yourself, &ldquo;What if it was a gift?&rdquo; and then try to rationalize a way it could be so.
           </span>
           <small class="quote-author only-ember"><a href="https://en.wikipedia.org/wiki/Benjamin_Franklin" target="_blank" rel="noopener">Benjamin Franklin</a></small>
-          <small class="quote-author only-ocean"><a href="https://en.wikipedia.org/wiki/George_Bernard_Shaw" target="_blank" rel="noopener">George Bernard Shaw</a></small>
-          <small class="quote-author only-violet"><a href="https://en.wikipedia.org/wiki/Robert_Frost" target="_blank" rel="noopener">Robert Frost</a></small>
-          <small class="quote-author only-aurora"><a href="https://en.wikipedia.org/wiki/Carl_Sagan" target="_blank" rel="noopener">Carl Sagan</a></small>
-          <small class="quote-author only-solar"><a href="https://en.wikipedia.org/wiki/Arthur_C._Clarke" target="_blank" rel="noopener">Arthur C. Clarke</a></small>
-          <small class="quote-author only-cosmic"><a href="https://en.wikipedia.org/wiki/Arthur_Eddington" target="_blank" rel="noopener">Arthur Eddington</a></small>
+          <small class="quote-author only-ocean"><a href="https://en.wikipedia.org/wiki/Kabir" target="_blank" rel="noopener">Kabir</a></small>
+          <small class="quote-author only-violet"><a href="https://en.wikipedia.org/wiki/%C5%9A%C4%81ntideva" target="_blank" rel="noopener">&#x15A;&#x101;ntideva</a></small>
+          <small class="quote-author only-aurora"><a href="https://en.wikipedia.org/wiki/Merc%C3%A8_Rodoreda" target="_blank" rel="noopener">Merc&egrave; Rodoreda</a></small>
+          <small class="quote-author only-solar"><a href="https://en.wikipedia.org/wiki/Chick_Corea" target="_blank" rel="noopener">Chick Corea</a></small>
+          <small class="quote-author only-cosmic"><a href="https://en.wikipedia.org/wiki/Mark_Manson" target="_blank" rel="noopener">Mark Manson</a></small>
         </blockquote>
 
         <!-- Fractal selector buttons (colored dots) — 6 themes -->
         <div id="fractals" class="btn-row">
           <button class="fractal-btn first active" data-theme="ember" title="Quadratic Koch Island"></button>
-          <button class="fractal-btn" data-theme="ocean" title="Minkowski Sausage"></button>
+          <button class="fractal-btn" data-theme="ocean" title="Julia Dendrite"></button>
           <button class="fractal-btn" data-theme="violet" title="Terdragon"></button>
           <button class="fractal-btn" data-theme="aurora" title="Pentigree"></button>
           <button class="fractal-btn" data-theme="solar" title="Lévy C Curve"></button>
@@ -95,17 +99,23 @@
       <div id="more" class="card">
         <p class="tagline">
           Researching AI safety. Interested in music, poetry,
-          philosophy, and experimenting. Contact me via
-          <a href="https://x.com/brandonsayler">Twitter DM</a> or
-          <a href="https://linkedin.com/in/brandonsayler">LinkedIn</a>.
+          philosophy, and experimenting (and
+          <a href="https://untappd.com/user/brandon_sayler" target="_blank" rel="noopener">connoisseurship</a>).
+          More about me <a href="https://sayler.substack.com/about" target="_blank" rel="noopener">here</a>.
         </p>
 
-        <h2>Interests</h2>
+        <p class="tagline" style="font-size: 0.8em; opacity: 0.7; margin-top: 0.3em;">
+          Website heavily inspired by Nate Soares at
+          <a href="http://so8res.com" target="_blank" rel="noopener">so8res.com</a>.
+        </p>
+
+        <h2>Research Interests</h2>
         <ul class="interests">
-          <li>AI Safety &amp; Alignment</li>
-          <li>Philosophy of Mind</li>
-          <li>Music</li>
-          <li>Poetry</li>
+          <li><a href="https://forum.effectivealtruism.org/topics/macrostrategy" target="_blank" rel="noopener">Macrostrategy</a></li>
+          <li><a href="https://www.utilitarianism.com/nu/nufaq.html" target="_blank" rel="noopener">Normative</a> and <a href="https://forum.effectivealtruism.org/posts/ZysrrTzMipZJor6EW/moral-anti-realism-introduction-and-summary" target="_blank" rel="noopener">Meta</a> Ethics</li>
+          <li>Formal <a href="https://forum.effectivealtruism.org/posts/ygetruijHKYpmkWAs/discussions-of-longtermism-should-focus-on-the-problem-of" target="_blank" rel="noopener">Epistemology</a></li>
+          <li><a href="https://www.aisi.gov.uk/category/science-of-evaluations" target="_blank" rel="noopener">Science of Evaluations</a></li>
+          <li>Entrepreneurship</li>
         </ul>
 
         <div class="more-links">

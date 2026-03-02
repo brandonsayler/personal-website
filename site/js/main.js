@@ -9,7 +9,7 @@
 
   var wikiLinks = {
     ember:  { name: 'Quadratic Koch Island',  url: 'https://en.wikipedia.org/wiki/Koch_snowflake#Variants' },
-    ocean:  { name: 'Minkowski Sausage',      url: 'https://en.wikipedia.org/wiki/Minkowski_sausage' },
+    ocean:  { name: 'Julia Dendrite',         url: 'https://en.wikipedia.org/wiki/Julia_set#Types_of_Julia_sets' },
     violet: { name: 'Terdragon',              url: 'https://en.wikipedia.org/wiki/Terdragon' },
     aurora: { name: 'Pentigree',              url: 'https://en.wikipedia.org/wiki/N-flake' },
     solar:  { name: 'L\u00e9vy C Curve',      url: 'https://en.wikipedia.org/wiki/L%C3%A9vy_C_curve' },
@@ -66,6 +66,40 @@
     var num = parseInt(e.key, 10);
     if (num >= 1 && num <= 6) {
       switchTheme(themeOrder[num - 1]);
+    }
+  });
+
+  // =========================================================================
+  // Easter egg: Konami code (↑↑↓↓←→←→BA)
+  // =========================================================================
+
+  var konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+                        'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+                        'b', 'a'];
+  var konamiIndex = 0;
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === konamiSequence[konamiIndex] ||
+        e.key.toLowerCase() === konamiSequence[konamiIndex]) {
+      konamiIndex++;
+      if (konamiIndex === konamiSequence.length) {
+        konamiIndex = 0;
+        if (window.spawnAllFractalsAtCenter) {
+          window.spawnAllFractalsAtCenter();
+        }
+        // Brief flash
+        var flash = document.createElement('div');
+        flash.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;' +
+          'background:rgba(255,255,255,0.25);z-index:9999;pointer-events:none;' +
+          'transition:opacity 0.5s;opacity:1;';
+        document.body.appendChild(flash);
+        setTimeout(function () { flash.style.opacity = '0'; }, 50);
+        setTimeout(function () { document.body.removeChild(flash); }, 600);
+      }
+    } else {
+      konamiIndex = 0;
+      if (e.key === konamiSequence[0]) konamiIndex = 1;
     }
   });
 
@@ -136,7 +170,7 @@
   setInterval(updateControls, 500);
 
   // =========================================================================
-  // Dark mode
+  // Dark mode — follows system preference, manual toggle is session-only
   // =========================================================================
 
   var btnDarkMode = document.getElementById('btn-darkmode');
@@ -152,32 +186,21 @@
       btnDarkMode.textContent = '\u263E';  // moon ☾
       btnDarkMode.title = 'Switch to dark mode';
     }
-    try { localStorage.setItem('darkMode', isDark ? '1' : '0'); } catch (e) {}
   }
 
-  // Initialize: check localStorage first, then system preference
-  var stored = null;
-  try { stored = localStorage.getItem('darkMode'); } catch (e) {}
+  // Initialize: follow system preference (inline <head> script already set
+  // the attribute to prevent flash, so just sync the button icon here)
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setDarkMode(prefersDark);
 
-  if (stored !== null) {
-    setDarkMode(stored === '1');
-  } else {
-    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setDarkMode(prefersDark);
-  }
-
-  // Listen for system preference changes (only if no manual override)
+  // System preference changes always take effect (reset any manual toggle)
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
-      var hasManual = null;
-      try { hasManual = localStorage.getItem('darkMode'); } catch (err) {}
-      if (hasManual === null) {
-        setDarkMode(e.matches);
-      }
+      setDarkMode(e.matches);
     });
   }
 
-  // Manual toggle
+  // Manual toggle — session-only override
   btnDarkMode.addEventListener('click', function () {
     var isDark = htmlEl.getAttribute('data-mode') === 'dark';
     setDarkMode(!isDark);
