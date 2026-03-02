@@ -210,42 +210,42 @@
 
   var fractalDefs = {
 
-    // HILBERT CURVE (ember / red theme)
-    // Space-filling curve with right-angle meanders, 90° turns
+    // QUADRATIC KOCH ISLAND (ember / red theme)
+    // Ornamental square snowflake, 90° turns
     ember: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: Math.random(),
-        stepSize: 3,
+        theta: 0.75 + (Math.random() - 0.5) * 0.05,
+        stepSize: 2,
         angle: 1/4,     // 90 degrees
-        axiom: 'X',
-        rules: { X: '-YF+XFX+FY-', Y: '+XF-YFY-FX+' },
-        cap: 9,
+        axiom: 'F+F+F+F',
+        rules: { F: 'F+F-F-FF+F+F-F' },
+        cap: 6,
         colorWheel: new ColorWheel(
-          new Oscillator(0, 0.15, 0.3, 0.03),
-          new Oscillator(0, 0.1, 0.25, 0.85),
-          new Oscillator(0, 0.12, 0.35, 0.5),
+          new Oscillator(0, 0.04, 0.3, 0.03),
+          new Oscillator(0, 0.06, 0.25, 0.80),
+          new Oscillator(0, 0.06, 0.35, 0.50),
           1/500
         ),
         onDie: onDie
       });
     },
 
-    // SIERPINSKI ARROWHEAD (ocean / blue theme)
-    // Triangular space-filling curve, 60° turns. A and B both draw forward.
+    // MINKOWSKI SAUSAGE (ocean / blue theme)
+    // Bumpy recursive curve, 90° turns
     ocean: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: Math.random(),
+        theta: 0.75 + (Math.random() - 0.5) * 0.05,
         stepSize: 2,
-        angle: 1/6,     // 60 degrees
-        axiom: 'A',
-        rules: { A: '+B-A-B+', B: '-A+B+A-' },
-        cap: 11,
+        angle: 1/4,     // 90 degrees
+        axiom: 'F',
+        rules: { F: 'F+F-F-F+F' },
+        cap: 8,
         colorWheel: new ColorWheel(
-          new Oscillator(0, 0.2, 0.3, 0.58),
-          new Oscillator(0, 0.15, 0.25, 0.75),
-          new Oscillator(0, 0.1, 0.3, 0.5),
+          new Oscillator(0, 0.04, 0.3, 0.58),
+          new Oscillator(0, 0.06, 0.25, 0.72),
+          new Oscillator(0, 0.06, 0.3, 0.50),
           1/400
         ),
         onDie: onDie
@@ -257,16 +257,16 @@
     violet: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: Math.random(),
+        theta: 0.75 + (Math.random() - 0.5) * 0.05,
         stepSize: 2,
         angle: 1/3,     // 120 degrees
         axiom: 'F',
         rules: { F: 'F+F-F' },
         cap: 12,
         colorWheel: new ColorWheel(
-          new Oscillator(0, 0.2, 0.35, 0.75),
-          new Oscillator(0, 0.15, 0.3, 0.7),
-          new Oscillator(0, 0.1, 0.25, 0.55),
+          new Oscillator(0, 0.04, 0.35, 0.75),
+          new Oscillator(0, 0.06, 0.3, 0.68),
+          new Oscillator(0, 0.06, 0.25, 0.52),
           1/350
         ),
         onDie: onDie
@@ -278,16 +278,16 @@
     aurora: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: Math.random(),
+        theta: 0.75 + (Math.random() - 0.5) * 0.05,
         stepSize: 2,
         angle: 1/5,     // 72 degrees
         axiom: 'F-F-F-F-F',
         rules: { F: 'F-F++F+F-F-F' },
         cap: 6,
         colorWheel: new ColorWheel(
-          new Oscillator(0, 0.35, 0.4, 0.50),
-          new Oscillator(0, 0.15, 0.3, 0.8),
-          new Oscillator(0, 0.1, 0.25, 0.55),
+          new Oscillator(0, 0.04, 0.4, 0.50),
+          new Oscillator(0, 0.06, 0.3, 0.78),
+          new Oscillator(0, 0.06, 0.25, 0.52),
           1/400
         ),
         onDie: onDie
@@ -299,16 +299,16 @@
     solar: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: Math.random(),
+        theta: 0.75 + (Math.random() - 0.5) * 0.05,
         stepSize: 2,
         angle: 1/8,     // 45 degrees
         axiom: 'F',
         rules: { F: '+F--F+' },
         cap: 18,
         colorWheel: new ColorWheel(
-          new Oscillator(0, 0.2, 0.35, 0.08),
-          new Oscillator(0, 0.1, 0.25, 0.85),
-          new Oscillator(0, 0.1, 0.3, 0.55),
+          new Oscillator(0, 0.03, 0.35, 0.08),
+          new Oscillator(0, 0.06, 0.25, 0.82),
+          new Oscillator(0, 0.06, 0.3, 0.52),
           1/350
         ),
         onDie: onDie
@@ -320,16 +320,16 @@
     cosmic: function (ctx, x, y, onDie) {
       return new Fractal({
         ctx: ctx, x: x, y: y,
-        theta: Math.random(),
+        theta: 0.75 + (Math.random() - 0.5) * 0.05,
         stepSize: 3,
         angle: 1/6,     // 60 degrees
         axiom: 'A',
         rules: { A: 'A-B--B+A++AA+B-', B: '+A-BB--B-A++A+B' },
         cap: 7,
         colorWheel: new ColorWheel(
-          new Oscillator(0, 0.25, 0.35, 0.88),
-          new Oscillator(0, 0.15, 0.3, 0.75),
-          new Oscillator(0, 0.1, 0.25, 0.55),
+          new Oscillator(0, 0.03, 0.35, 0.88),
+          new Oscillator(0, 0.06, 0.3, 0.72),
+          new Oscillator(0, 0.06, 0.25, 0.52),
           1/450
         ),
         onDie: onDie

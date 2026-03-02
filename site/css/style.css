@@ -341,13 +341,7 @@ blockquote {
   background: #e6e6e6;
 }
 
-/* Hide controls until fractals are active */
-#controls {
-  visibility: hidden;
-}
-#controls.visible {
-  visibility: visible;
-}
+/* Controls always visible (dark mode toggle needs to be accessible) */
 
 /* === Wikipedia fractal link === */
 .fractal-wiki {
@@ -415,6 +409,63 @@ blockquote {
   font-size: 0.85em;
   margin-top: 0.5em;
 }
+
+/* === Dark Mode === */
+html[data-mode="dark"] {
+  --card-bg: rgba(30, 30, 35, 0.88);
+  --card-shadow: rgba(0, 0, 0, 0.4);
+}
+
+html[data-mode="dark"] body {
+  background-color: #1a1a1e;
+  color: #e0e0e0;
+}
+
+html[data-mode="dark"] .card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html[data-mode="dark"] h2 {
+  color: #aaa;
+}
+
+html[data-mode="dark"] .quote-author,
+html[data-mode="dark"] .quote-author a {
+  color: #888;
+}
+
+/* Dark mode link colors (lighter for contrast) */
+html[data-mode="dark"] .theme-ember a { color: #e8a08e; }
+html[data-mode="dark"] .theme-ember a:visited { color: #f0c0b0; }
+html[data-mode="dark"] .theme-ocean a { color: #64b5f6; }
+html[data-mode="dark"] .theme-ocean a:visited { color: #90caf9; }
+html[data-mode="dark"] .theme-violet a { color: #ba68c8; }
+html[data-mode="dark"] .theme-violet a:visited { color: #ce93d8; }
+html[data-mode="dark"] .theme-aurora a { color: #4db6ac; }
+html[data-mode="dark"] .theme-aurora a:visited { color: #80cbc4; }
+html[data-mode="dark"] .theme-solar a { color: #ffca28; }
+html[data-mode="dark"] .theme-solar a:visited { color: #ffe082; }
+html[data-mode="dark"] .theme-cosmic a { color: #f06292; }
+html[data-mode="dark"] .theme-cosmic a:visited { color: #f48fb1; }
+
+/* Dark mode buttons */
+html[data-mode="dark"] .ctrl-btn {
+  background: #333;
+  border-color: #555;
+  color: #ddd;
+}
+html[data-mode="dark"] .ctrl-btn:hover {
+  background: #444;
+}
+html[data-mode="dark"] .fractal-btn {
+  border-color: #555;
+}
+
+/* Dark mode misc */
+html[data-mode="dark"] .more-links .sep { color: #666; }
+html[data-mode="dark"] .interests li::before { color: var(--accent-light); }
+html[data-mode="dark"] .hint { color: #888; }
+html[data-mode="dark"] .fractal-wiki { color: var(--accent-light); }
 
 /* === Responsive === */
 @media (max-width: 480px) {

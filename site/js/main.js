@@ -1,4 +1,4 @@
-// Theme switching, fixed quotes, card toggling, pause/trash controls, floating cursor
+// Theme switching, fixed quotes, card toggling, pause/trash controls, floating cursor, dark mode
 
 (function () {
   'use strict';
@@ -8,12 +8,12 @@
   // =========================================================================
 
   var wikiLinks = {
-    ember:  { name: 'Hilbert Curve',          url: 'https://en.wikipedia.org/wiki/Hilbert_curve' },
-    ocean:  { name: 'Sierpinski Arrowhead',    url: 'https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve' },
-    violet: { name: 'Terdragon',               url: 'https://en.wikipedia.org/wiki/Terdragon' },
-    aurora: { name: 'Pentigree',               url: 'https://en.wikipedia.org/wiki/N-flake' },
-    solar:  { name: 'L\u00e9vy C Curve',       url: 'https://en.wikipedia.org/wiki/L%C3%A9vy_C_curve' },
-    cosmic: { name: 'Gosper Curve',            url: 'https://en.wikipedia.org/wiki/Gosper_curve' }
+    ember:  { name: 'Quadratic Koch Island',  url: 'https://en.wikipedia.org/wiki/Koch_snowflake#Variants' },
+    ocean:  { name: 'Minkowski Sausage',      url: 'https://en.wikipedia.org/wiki/Minkowski_sausage' },
+    violet: { name: 'Terdragon',              url: 'https://en.wikipedia.org/wiki/Terdragon' },
+    aurora: { name: 'Pentigree',              url: 'https://en.wikipedia.org/wiki/N-flake' },
+    solar:  { name: 'L\u00e9vy C Curve',      url: 'https://en.wikipedia.org/wiki/L%C3%A9vy_C_curve' },
+    cosmic: { name: 'Gosper Curve',           url: 'https://en.wikipedia.org/wiki/Gosper_curve' }
   };
 
   var fractalWiki = document.getElementById('fractal-wiki');
@@ -66,7 +66,7 @@
   });
 
   // =========================================================================
-  // Pause / Trash controls (like Soares)
+  // Pause / Trash controls
   // =========================================================================
 
   var btnPause = document.getElementById('btn-pause');
@@ -111,7 +111,55 @@
   setInterval(updateControls, 500);
 
   // =========================================================================
-  // Floating laggy cursor (like Soares' SVG dot + halo)
+  // Dark mode
+  // =========================================================================
+
+  var btnDarkMode = document.getElementById('btn-darkmode');
+  var htmlEl = document.documentElement;
+
+  function setDarkMode(isDark) {
+    if (isDark) {
+      htmlEl.setAttribute('data-mode', 'dark');
+      btnDarkMode.textContent = '\u2600';  // sun ☀
+      btnDarkMode.title = 'Switch to light mode';
+    } else {
+      htmlEl.removeAttribute('data-mode');
+      btnDarkMode.textContent = '\u263E';  // moon ☾
+      btnDarkMode.title = 'Switch to dark mode';
+    }
+    try { localStorage.setItem('darkMode', isDark ? '1' : '0'); } catch (e) {}
+  }
+
+  // Initialize: check localStorage first, then system preference
+  var stored = null;
+  try { stored = localStorage.getItem('darkMode'); } catch (e) {}
+
+  if (stored !== null) {
+    setDarkMode(stored === '1');
+  } else {
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setDarkMode(prefersDark);
+  }
+
+  // Listen for system preference changes (only if no manual override)
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+      var hasManual = null;
+      try { hasManual = localStorage.getItem('darkMode'); } catch (err) {}
+      if (hasManual === null) {
+        setDarkMode(e.matches);
+      }
+    });
+  }
+
+  // Manual toggle
+  btnDarkMode.addEventListener('click', function () {
+    var isDark = htmlEl.getAttribute('data-mode') === 'dark';
+    setDarkMode(!isDark);
+  });
+
+  // =========================================================================
+  // Floating laggy cursor (SVG dot + halo)
   // =========================================================================
 
   var dot = document.getElementById('dot');
