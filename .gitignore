@@ -9,3 +9,10 @@ so8res.com/
 
 # Original full-res photos (copies in site/img/)
 brandon's photos/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
