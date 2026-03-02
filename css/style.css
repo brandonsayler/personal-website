@@ -1,0 +1,514 @@
+/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 1em;
+  line-height: 1.6;
+  color: #222;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  cursor: none; /* hide default cursor — we use the SVG floating cursor */
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.4s;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* === Theme Colors (6 themes) === */
+:root {
+  --card-bg: rgba(250, 250, 250, 0.82);
+  --card-shadow: rgba(0, 0, 0, 0.12);
+}
+
+/* Ember (red) */
+.theme-ember { --accent: #c94925; --accent-light: #e8a08e; }
+.theme-ember a { color: #c94925; }
+.theme-ember a:visited { color: #e8a08e; }
+
+/* Ocean (blue) */
+.theme-ocean { --accent: #1565c0; --accent-light: #64b5f6; }
+.theme-ocean a { color: #1565c0; }
+.theme-ocean a:visited { color: #64b5f6; }
+
+/* Violet (purple) */
+.theme-violet { --accent: #7b1fa2; --accent-light: #ba68c8; }
+.theme-violet a { color: #7b1fa2; }
+.theme-violet a:visited { color: #ba68c8; }
+
+/* Aurora (teal) */
+.theme-aurora { --accent: #00897b; --accent-light: #4db6ac; }
+.theme-aurora a { color: #00897b; }
+.theme-aurora a:visited { color: #4db6ac; }
+
+/* Solar (amber) */
+.theme-solar { --accent: #ff8f00; --accent-light: #ffca28; }
+.theme-solar a { color: #ff8f00; }
+.theme-solar a:visited { color: #ffca28; }
+
+/* Cosmic (pink) */
+.theme-cosmic { --accent: #c2185b; --accent-light: #f06292; }
+.theme-cosmic a { color: #c2185b; }
+.theme-cosmic a:visited { color: #f06292; }
+
+/* === Canvas === */
+#canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  cursor: none;
+}
+
+/* === Floating Cursor SVG === */
+#cursor-svg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#halo, #dot {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+/* Only show cursor after mouse has moved */
+html.moved #halo,
+html.moved #dot {
+  opacity: 0.7;
+}
+
+/* Cursor colors per theme */
+.theme-ember #halo { stroke: #fdd017; }
+.theme-ember #dot { fill: #fa0; }
+.theme-ocean #halo { stroke: #88eeee; }
+.theme-ocean #dot { fill: #6cc; }
+.theme-violet #halo { stroke: #ba68c8; }
+.theme-violet #dot { fill: #7b1fa2; }
+.theme-aurora #halo { stroke: #80cbc4; }
+.theme-aurora #dot { fill: #00897b; }
+.theme-solar #halo { stroke: #ffe082; }
+.theme-solar #dot { fill: #ff8f00; }
+.theme-cosmic #halo { stroke: #f48fb1; }
+.theme-cosmic #dot { fill: #c2185b; }
+
+/* Cursor trail dots */
+.trail-dot {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  transition: none;
+}
+
+/* === Overlay / Card === */
+#overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100vh;
+  padding-top: 12vh;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#card-container {
+  pointer-events: auto;
+  cursor: auto; /* restore normal cursor inside card */
+}
+
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  max-width: 340px;
+  padding: 1.8em 2em;
+  box-shadow: 0 2px 24px var(--card-shadow);
+  border-radius: 4px;
+  position: relative;
+  overflow: auto;
+  transition: box-shadow 0.6s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Brief glow on theme switch */
+.card.theme-glow {
+  box-shadow: 0 0 20px 4px var(--accent-light);
+}
+
+#more {
+  display: none;
+}
+
+/* === Theme Photos === */
+.theme-photo {
+  float: right;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.8s;
+  border-radius: 2px;
+}
+
+/* Show the active theme's photo */
+.theme-ember .only-ember.theme-photo,
+.theme-ocean .only-ocean.theme-photo,
+.theme-violet .only-violet.theme-photo,
+.theme-aurora .only-aurora.theme-photo,
+.theme-solar .only-solar.theme-photo,
+.theme-cosmic .only-cosmic.theme-photo {
+  width: 80px;
+  height: 80px;
+  opacity: 1;
+  object-fit: cover;
+}
+
+/* === Typography === */
+h1 {
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 0.4em;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+h2 {
+  font-size: 0.95em;
+  font-weight: bold;
+  margin: 1em 0 0.4em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #555;
+  transition: color 0.25s ease;
+}
+
+/* === Links List === */
+.links {
+  list-style: none;
+  margin: 0.6em 0;
+}
+.links li {
+  line-height: 2;
+}
+.links .arrow {
+  font-family: 'Courier New', monospace;
+  display: inline-block;
+  margin-right: 0.8em;
+  color: var(--accent);
+  transition: transform 0.25s ease;
+}
+.links li:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* === Blockquote with per-theme quotes === */
+blockquote {
+  border-left: 3px solid var(--accent-light, #ddd);
+  padding: 0 0 0 1em;
+  margin: 1em 0 0.8em;
+  min-height: 4.5em;
+  overflow: hidden;
+}
+
+/* All quote elements hidden by default */
+.quote-text,
+.quote-author {
+  display: block;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.8s;
+}
+
+.quote-text {
+  font-family: 'Georgia', serif;
+  font-size: 0.92em;
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 0.3em;
+}
+
+.quote-author {
+  font-size: 0.78em;
+  color: #999;
+  text-align: right;
+}
+.quote-author::before {
+  content: '\2014\00A0';
+}
+.quote-author a {
+  color: #999;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.quote-author a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Show active theme's quote */
+.theme-ember .only-ember.quote-text,
+.theme-ember .only-ember.quote-author,
+.theme-ocean .only-ocean.quote-text,
+.theme-ocean .only-ocean.quote-author,
+.theme-violet .only-violet.quote-text,
+.theme-violet .only-violet.quote-author,
+.theme-aurora .only-aurora.quote-text,
+.theme-aurora .only-aurora.quote-author,
+.theme-solar .only-solar.quote-text,
+.theme-solar .only-solar.quote-author,
+.theme-cosmic .only-cosmic.quote-text,
+.theme-cosmic .only-cosmic.quote-author {
+  height: auto;
+  opacity: 1;
+}
+
+/* === Button Row === */
+.btn-row {
+  display: flex;
+  gap: 0;
+  margin-top: 1.2em;
+  float: left;
+}
+
+.btn-row + .btn-row {
+  float: right;
+  margin-left: 5px;
+}
+
+/* === Fractal Selector Buttons (colored dots) === */
+.fractal-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ccc;
+  border-left-width: 0;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.3s;
+  background: #bbb;
+  border-radius: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+.fractal-btn.first {
+  border-left-width: 1px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.fractal-btn.last {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.fractal-btn:hover {
+  opacity: 0.8;
+}
+.fractal-btn.active {
+  opacity: 0.5;
+}
+
+/* Fractal button colors (6 themes) */
+.fractal-btn[data-theme="ember"]  { background: #c94925; }
+.fractal-btn[data-theme="ocean"]  { background: #1565c0; }
+.fractal-btn[data-theme="violet"] { background: #7b1fa2; }
+.fractal-btn[data-theme="aurora"] { background: #00897b; }
+.fractal-btn[data-theme="solar"]  { background: #ff8f00; }
+.fractal-btn[data-theme="cosmic"] { background: #c2185b; }
+
+/* === Control Buttons (trash + pause) === */
+.ctrl-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ccc;
+  border-left-width: 0;
+  cursor: pointer;
+  background: #f5f5f5;
+  font-size: 12px;
+  line-height: 28px;
+  text-align: center;
+  padding: 0;
+  border-radius: 0;
+  display: inline-block;
+  vertical-align: middle;
+  transition: background 0.2s, color 0.25s ease, border-color 0.25s ease;
+}
+.ctrl-btn.first {
+  border-left-width: 1px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.ctrl-btn.last {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.ctrl-btn:hover {
+  background: #e6e6e6;
+}
+
+/* Controls always visible (dark mode toggle needs to be accessible) */
+
+/* === Wikipedia fractal link === */
+.fractal-wiki {
+  display: block;
+  clear: both;
+  padding-top: 1em;
+  font-family: sans-serif;
+  font-size: 0.72em;
+  opacity: 0.45;
+  transition: opacity 0.3s;
+}
+.fractal-wiki:hover {
+  opacity: 0.8;
+}
+
+/* === Hint === */
+.hint {
+  display: block;
+  font-size: 0.68em;
+  opacity: 0.4;
+  text-align: right;
+  margin-top: 0.4em;
+  font-family: sans-serif;
+}
+
+/* === More panel === */
+.tagline {
+  font-family: 'Georgia', serif;
+  font-size: 0.9em;
+  line-height: 1.6;
+  margin-bottom: 0.5em;
+}
+
+.interests {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1em;
+}
+.interests li {
+  font-family: sans-serif;
+  font-size: 0.85em;
+  line-height: 1.9;
+  padding-left: 1.2em;
+  position: relative;
+}
+.interests li::before {
+  content: '\2022';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.more-links {
+  margin: 1.2em 0 0.8em;
+  font-family: sans-serif;
+  font-size: 0.85em;
+}
+.more-links .sep {
+  margin: 0 0.5em;
+  color: #999;
+}
+
+#toggle-less {
+  display: inline-block;
+  font-size: 0.85em;
+  margin-top: 0.5em;
+}
+
+/* === Dark Mode === */
+html[data-mode="dark"] {
+  --card-bg: rgba(30, 30, 35, 0.88);
+  --card-shadow: rgba(0, 0, 0, 0.4);
+}
+
+html[data-mode="dark"] body {
+  background-color: #1a1a1e;
+  color: #e0e0e0;
+}
+
+html[data-mode="dark"] .card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html[data-mode="dark"] h2 {
+  color: #aaa;
+}
+
+html[data-mode="dark"] .quote-author,
+html[data-mode="dark"] .quote-author a {
+  color: #888;
+}
+
+/* Dark mode link colors (lighter for contrast) */
+html[data-mode="dark"] .theme-ember a { color: #e8a08e; }
+html[data-mode="dark"] .theme-ember a:visited { color: #f0c0b0; }
+html[data-mode="dark"] .theme-ocean a { color: #64b5f6; }
+html[data-mode="dark"] .theme-ocean a:visited { color: #90caf9; }
+html[data-mode="dark"] .theme-violet a { color: #ba68c8; }
+html[data-mode="dark"] .theme-violet a:visited { color: #ce93d8; }
+html[data-mode="dark"] .theme-aurora a { color: #4db6ac; }
+html[data-mode="dark"] .theme-aurora a:visited { color: #80cbc4; }
+html[data-mode="dark"] .theme-solar a { color: #ffca28; }
+html[data-mode="dark"] .theme-solar a:visited { color: #ffe082; }
+html[data-mode="dark"] .theme-cosmic a { color: #f06292; }
+html[data-mode="dark"] .theme-cosmic a:visited { color: #f48fb1; }
+
+/* Dark mode buttons */
+html[data-mode="dark"] .ctrl-btn {
+  background: #333;
+  border-color: #555;
+  color: #ddd;
+}
+html[data-mode="dark"] .ctrl-btn:hover {
+  background: #444;
+}
+html[data-mode="dark"] .fractal-btn {
+  border-color: #555;
+}
+
+/* Dark mode misc */
+html[data-mode="dark"] .more-links .sep { color: #666; }
+html[data-mode="dark"] .interests li::before { color: var(--accent-light); }
+html[data-mode="dark"] .hint { color: #888; }
+html[data-mode="dark"] .fractal-wiki { color: var(--accent-light); }
+
+/* === Responsive === */
+@media (max-width: 480px) {
+  #overlay {
+    padding-top: 6vh;
+  }
+  .card {
+    max-width: 92vw;
+    padding: 1.4em 1.4em;
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    max-width: 360px;
+  }
+  #overlay {
+    justify-content: flex-start;
+    padding-left: 8vw;
+  }
+}
