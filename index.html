@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brandon Sayler</title>
+  <meta name="description" content="Brandon Sayler — AI safety researcher, writer, musician, philosopher.">
+  <meta name="author" content="Brandon Sayler">
+  <meta property="og:title" content="Brandon Sayler">
+  <meta property="og:description" content="AI safety researcher, writer, musician, philosopher.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Brandon Sayler">
+  <meta name="twitter:description" content="AI safety researcher, writer, musician, philosopher.">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Prevent flash of light mode on dark-preference systems
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-mode', 'dark');
+    }
+  </script>
+</head>
+<body class="theme-ember">
+  <canvas id="canvas"></canvas>
+
+  <!-- Floating cursor SVG -->
+  <svg xmlns="http://www.w3.org/2000/svg" id="cursor-svg">
+    <circle id="halo" class="ring" cx="0" cy="0" r="10" stroke-width="4" fill="none"></circle>
+    <circle id="dot" class="ring" cx="0" cy="0" r="4"></circle>
+  </svg>
+
+  <div id="overlay">
+    <div id="card-container">
+      <div id="card" class="card">
+        <!-- Theme photos (one per theme) -->
+        <img class="theme-photo only-ember" src="img/ember.jpg" alt="">
+        <img class="theme-photo only-ocean" src="img/ocean.jpg" alt="">
+        <img class="theme-photo only-violet" src="img/violet.jpg" alt="">
+        <img class="theme-photo only-aurora" src="img/aurora.jpg" alt="">
+        <img class="theme-photo only-solar" src="img/solar.jpg" alt="">
+        <img class="theme-photo only-cosmic" src="img/cosmic.jpg" alt="">
+
+        <h1>Brandon Sayler</h1>
+        <ul class="links">
+          <li><span class="arrow">&rarr;</span><a href="https://linkedin.com/in/brandonsayler">AI Safety-ist</a></li>
+          <li><span class="arrow">&rarr;</span><a href="https://sayler.substack.com">Writer</a></li>
+          <li><span class="arrow">&rarr;</span><a href="https://stats.fm/sayler">Listener</a> &amp; <a href="https://bit.ly/brandonsmusictaste">Curator</a></li>
+          <li><span class="arrow">&rarr;</span><a href="https://x.com/brandonsayler">Tweeter?</a></li>
+          <li><span class="arrow">&rarr;</span><a href="#" id="toggle-more">more &raquo;</a></li>
+        </ul>
+
+        <!-- Fixed quotes per theme -->
+        <blockquote>
+          <span class="quote-text only-ember">
+            The noblest question in the world is: What good may I do in it?
+          </span>
+          <span class="quote-text only-ocean">
+            No thread emerges from the empty shuttle, no shed stands ready for picking and beating&mdash;the yarn in the heddles is tangled. Kabir says, let go of the mess, let that poor wish remain unfulfilled.
+          </span>
+          <span class="quote-text only-violet">
+            Why am I timid when my aim is liberation? There is nothing whatsoever that remains difficult as one gets used to it. Thus, through habituation with slight pain, even great pain becomes bearable. Do you not consider the pain of bugs, gadflies, and mosquitoes, of thirst and hunger, and the irritation of a serious rash and the like as insignificant?
+          </span>
+          <span class="quote-text only-aurora">
+            The little drops fell on the rooftops, on the streets, on the gardens, on the sea as if it didn&rsquo;t already have enough water, and maybe also on the mountains. It was midafternoon, but we could hardly see. Drops of water hung from the clotheslines and played tag and sometimes one of them would fall and before it fell it would stretch and stretch, because you could see it was hard for it to let go.
+          </span>
+          <span class="quote-text only-solar">
+            I don&rsquo;t think any artist really knows why a song gets popular.
+          </span>
+          <span class="quote-text only-cosmic">
+            The phrase is: &ldquo;What if it was a gift?&rdquo; Whatever happens to you, no matter how bad, no matter how bleak you feel, ask yourself, &ldquo;What if it was a gift?&rdquo; and then try to rationalize a way it could be so.
+          </span>
+          <small class="quote-author only-ember"><a href="https://en.wikipedia.org/wiki/Benjamin_Franklin" target="_blank" rel="noopener">Benjamin Franklin</a></small>
+          <small class="quote-author only-ocean"><a href="https://en.wikipedia.org/wiki/Kabir" target="_blank" rel="noopener">Kabir</a></small>
+          <small class="quote-author only-violet"><a href="https://en.wikipedia.org/wiki/%C5%9A%C4%81ntideva" target="_blank" rel="noopener">&#x15A;&#x101;ntideva</a></small>
+          <small class="quote-author only-aurora"><a href="https://en.wikipedia.org/wiki/Merc%C3%A8_Rodoreda" target="_blank" rel="noopener">Merc&egrave; Rodoreda</a></small>
+          <small class="quote-author only-solar"><a href="https://en.wikipedia.org/wiki/Chick_Corea" target="_blank" rel="noopener">Chick Corea</a></small>
+          <small class="quote-author only-cosmic"><a href="https://en.wikipedia.org/wiki/Mark_Manson" target="_blank" rel="noopener">Mark Manson</a></small>
+        </blockquote>
+
+        <!-- Fractal selector buttons (colored dots) — 6 themes -->
+        <div id="fractals" class="btn-row">
+          <button class="fractal-btn first active" data-theme="ember" title="Quadratic Koch Island"></button>
+          <button class="fractal-btn" data-theme="ocean" title="Julia Dendrite"></button>
+          <button class="fractal-btn" data-theme="violet" title="Terdragon"></button>
+          <button class="fractal-btn" data-theme="aurora" title="Pentigree"></button>
+          <button class="fractal-btn" data-theme="solar" title="Lévy C Curve"></button>
+          <button class="fractal-btn last" data-theme="cosmic" title="Gosper Curve"></button>
+        </div>
+
+        <!-- Canvas controls (trash + pause/play + dark mode) -->
+        <div id="controls" class="btn-row">
+          <button id="btn-trash" class="ctrl-btn first" title="Clear canvas">&#128465;</button>
+          <button id="btn-pause" class="ctrl-btn" title="Pause">&#9646;&#9646;</button>
+          <button id="btn-darkmode" class="ctrl-btn last" title="Toggle dark mode">&#9790;</button>
+        </div>
+
+        <!-- Wikipedia link for current fractal -->
+        <a id="fractal-wiki" class="fractal-wiki" href="https://en.wikipedia.org/wiki/Koch_snowflake#Variants" target="_blank" rel="noopener">
+          Quadratic Koch Island
+        </a>
+
+        <small class="hint">(click the canvas)</small>
+      </div>
+
+      <div id="more" class="card">
+        <p class="tagline">
+          Researching AI safety. Interested in music, poetry,
+          philosophy, and experimenting (and
+          <a href="https://untappd.com/user/brandon_sayler" target="_blank" rel="noopener">connoisseurship</a>).
+          More about me <a href="https://sayler.substack.com/about" target="_blank" rel="noopener">here</a>.
+        </p>
+
+        <p class="tagline" style="font-size: 0.8em; opacity: 0.7; margin-top: 0.3em;">
+          Website heavily inspired by Nate Soares at
+          <a href="http://so8res.com" target="_blank" rel="noopener">so8res.com</a>.
+        </p>
+
+        <h2>Research Interests</h2>
+        <ul class="interests">
+          <li><a href="https://forum.effectivealtruism.org/topics/macrostrategy" target="_blank" rel="noopener">Macrostrategy</a></li>
+          <li><a href="https://www.utilitarianism.com/nu/nufaq.html" target="_blank" rel="noopener">Normative</a> and <a href="https://forum.effectivealtruism.org/posts/ZysrrTzMipZJor6EW/moral-anti-realism-introduction-and-summary" target="_blank" rel="noopener">Meta</a> Ethics</li>
+          <li>Formal <a href="https://forum.effectivealtruism.org/posts/ygetruijHKYpmkWAs/discussions-of-longtermism-should-focus-on-the-problem-of" target="_blank" rel="noopener">Epistemology</a></li>
+          <li><a href="https://www.aisi.gov.uk/category/science-of-evaluations" target="_blank" rel="noopener">Science of Evaluations</a></li>
+          <li>Entrepreneurship</li>
+        </ul>
+
+        <div class="more-links">
+          <a href="https://linkedin.com/in/brandonsayler" title="LinkedIn">LinkedIn</a>
+          <span class="sep">&middot;</span>
+          <a href="https://sayler.substack.com" title="Substack">Substack</a>
+          <span class="sep">&middot;</span>
+          <a href="https://stats.fm/sayler" title="stats.fm">stats.fm</a>
+          <span class="sep">&middot;</span>
+          <a href="https://x.com/brandonsayler" title="X / Twitter">Twitter</a>
+        </div>
+
+        <a id="toggle-less" href="#">&laquo; back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/canvas.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
