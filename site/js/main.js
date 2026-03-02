@@ -31,17 +31,42 @@
   // =========================================================================
 
   var themeButtons = document.querySelectorAll('.fractal-btn');
+  var cardEl = document.querySelector('.card');
+  var themeOrder = ['ember', 'ocean', 'violet', 'aurora', 'solar', 'cosmic'];
+
+  function switchTheme(theme) {
+    document.body.className = 'theme-' + theme;
+    themeButtons.forEach(function (b) { b.classList.remove('active'); });
+    var match = document.querySelector('.fractal-btn[data-theme="' + theme + '"]');
+    if (match) match.classList.add('active');
+    // Switch fractal type (does NOT clear canvas — fractals coexist)
+    if (window.setFractalTheme) window.setFractalTheme(theme);
+    // Update Wikipedia link
+    updateWikiLink(theme);
+    // Brief glow on the card
+    if (cardEl) {
+      cardEl.classList.add('theme-glow');
+      setTimeout(function () { cardEl.classList.remove('theme-glow'); }, 600);
+    }
+  }
+
   themeButtons.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var theme = btn.dataset.theme;
-      document.body.className = 'theme-' + theme;
-      themeButtons.forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      // Switch fractal type (does NOT clear canvas — fractals coexist)
-      if (window.setFractalTheme) window.setFractalTheme(theme);
-      // Update Wikipedia link
-      updateWikiLink(theme);
+      switchTheme(btn.dataset.theme);
     });
+  });
+
+  // =========================================================================
+  // Keyboard shortcuts: 1-6 switch themes
+  // =========================================================================
+
+  document.addEventListener('keydown', function (e) {
+    // Ignore if typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    var num = parseInt(e.key, 10);
+    if (num >= 1 && num <= 6) {
+      switchTheme(themeOrder[num - 1]);
+    }
   });
 
   // =========================================================================
@@ -159,12 +184,24 @@
   });
 
   // =========================================================================
-  // Floating laggy cursor (SVG dot + halo)
+  // Floating laggy cursor (SVG dot + halo) + cursor trail
   // =========================================================================
 
   var dot = document.getElementById('dot');
   var halo = document.getElementById('halo');
   var cursorSvg = document.getElementById('cursor-svg');
+
+  // Cursor trail: pool of fading dots
+  var TRAIL_SIZE = 12;
+  var trailDots = [];
+  for (var t = 0; t < TRAIL_SIZE; t++) {
+    var td = document.createElement('div');
+    td.className = 'trail-dot';
+    document.body.appendChild(td);
+    trailDots.push({ el: td, x: 0, y: 0 });
+  }
+  var trailIndex = 0;
+  var trailFrame = 0;
 
   if (dot && halo) {
     var target = { x: 0, y: 0 };
@@ -213,6 +250,28 @@
         dot.setAttribute('cy', current.y);
         halo.setAttribute('cx', current.x);
         halo.setAttribute('cy', current.y);
+      }
+
+      // Drop a trail dot every 3rd frame while cursor is moving
+      trailFrame++;
+      if (trailFrame % 3 === 0 && hasMoved && distSq > 20) {
+        var trail = trailDots[trailIndex % TRAIL_SIZE];
+        trail.x = current.x;
+        trail.y = current.y;
+        trail.el.style.left = trail.x - 2.5 + 'px';
+        trail.el.style.top = trail.y - 2.5 + 'px';
+        trail.el.style.opacity = '0.5';
+        trailIndex++;
+      }
+
+      // Fade all trail dots
+      for (var i = 0; i < TRAIL_SIZE; i++) {
+        var op = parseFloat(trailDots[i].el.style.opacity) || 0;
+        if (op > 0.01) {
+          trailDots[i].el.style.opacity = (op * 0.92).toFixed(3);
+        } else if (op > 0) {
+          trailDots[i].el.style.opacity = '0';
+        }
       }
     }, 25);
   }

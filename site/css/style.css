@@ -108,6 +108,19 @@ html.moved #dot {
 .theme-cosmic #halo { stroke: #f48fb1; }
 .theme-cosmic #dot { fill: #c2185b; }
 
+/* Cursor trail dots */
+.trail-dot {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  transition: none;
+}
+
 /* === Overlay / Card === */
 #overlay {
   position: relative;
@@ -137,6 +150,12 @@ html.moved #dot {
   border-radius: 4px;
   position: relative;
   overflow: auto;
+  transition: box-shadow 0.6s ease;
+}
+
+/* Brief glow on theme switch */
+.card.theme-glow {
+  box-shadow: 0 0 20px 4px var(--accent-light);
 }
 
 #more {
@@ -197,6 +216,10 @@ h2 {
   display: inline-block;
   margin-right: 0.8em;
   color: var(--accent);
+  transition: transform 0.25s ease;
+}
+.links li:hover .arrow {
+  transform: translateX(4px);
 }
 
 /* === Blockquote with per-theme quotes === */
